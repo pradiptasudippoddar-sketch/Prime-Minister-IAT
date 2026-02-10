@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>IAT Experiment</title>
+
+    <!-- jsPsych core -->
+    <script src="https://unpkg.com/jspsych@7.3.0"></script>
+
+    <!-- jsPsych plugins -->
+    <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response"></script>
+
+    <link href="https://unpkg.com/jspsych@7.3.0/css/jspsych.css" rel="stylesheet" />
+  </head>
+
+  <body></body>
+
+  <script>
+    const jsPsych = initJsPsych({
+      on_finish: function() {
+        jsPsych.data.displayData();
+      }
+    });
+
+    const timeline = [];
+
+    const welcome = {
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus: "<h2>Welcome to the experiment</h2><p>Press any key to begin.</p>"
+    };
+
+    timeline.push(welcome);
+
+    const trial = {
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus: "<p>Press F for GOOD<br>Press J for BAD</p>",
+      choices: ['f', 'j'],
+      trial_duration: 3000
+    };
+
+    timeline.push(trial);
+
+    jsPsych.run(timeline);
+  </script>
+</html>

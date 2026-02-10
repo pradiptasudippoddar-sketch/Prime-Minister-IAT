@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <title>Prime Minister Popularity IAT</title>
 
     <!-- jsPsych core -->
@@ -14,7 +16,6 @@
     <script src="https://unpkg.com/@jspsych/plugin-instructions@1.1.4"></script>
     <script src="https://unpkg.com/@jspsych/plugin-iat-image@1.1.3"></script>
     <script src="https://unpkg.com/@jspsych/plugin-iat-html@1.1.3"></script>
-    <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.1.3"></script>
 
     <!-- jsPsych stylesheet -->
     <link href="https://unpkg.com/jspsych@7.3.4/css/jspsych.css" rel="stylesheet" />
@@ -25,95 +26,195 @@
         -webkit-tap-highlight-color: transparent;
       }
       
-      body {
+      html, body {
         margin: 0;
-        padding: 10px;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow-x: hidden;
         background-color: #f5f5f5;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
         touch-action: manipulation;
+      }
+      
+      body {
+        padding: 10px;
+        padding-bottom: 120px;
+      }
+      
+      .jspsych-display-element {
+        width: 100%;
+        max-width: 100%;
+      }
+      
+      .jspsych-content {
+        max-width: 95% !important;
+        margin: 0 auto !important;
+        padding-bottom: 20px;
       }
       
       .instructions-text {
         font-size: 18px;
         max-width: 900px;
-        margin: auto;
+        margin: 10px auto;
         text-align: left;
         line-height: 1.6;
-        padding: 10px;
+        padding: 15px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      }
+      
+      .instructions-text h1 {
+        color: #2c3e50;
+        margin-top: 0;
+      }
+      
+      .instructions-text h2 {
+        color: #34495e;
+        margin-top: 20px;
+      }
+      
+      .instructions-text ul {
+        padding-left: 25px;
+      }
+      
+      .instructions-text li {
+        margin: 8px 0;
       }
       
       .category-label {
         padding: 15px;
         margin: 10px;
-        background-color: #e0e0e0;
-        border-radius: 8px;
+        background-color: #e8f4f8;
+        border: 2px solid #3498db;
+        border-radius: 10px;
         font-weight: bold;
+        font-size: 16px;
+        text-align: center;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       }
-
-      /* Mobile touch buttons - FIXED POSITION */
-      .touch-response-buttons {
+      
+      .category-label h3 {
+        margin: 8px 0;
+        color: #2c3e50;
+      }
+      
+      .highlight-box {
+        margin: 25px auto;
+        padding: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      }
+      
+      .highlight-box h3 {
+        margin-top: 0;
+        font-size: 22px;
+      }
+      
+      /* Mobile touch buttons */
+      .touch-buttons {
         position: fixed;
         bottom: 0;
         left: 0;
         right: 0;
         display: flex;
         justify-content: space-between;
-        gap: 10px;
-        padding: 15px;
+        padding: 12px;
         background: rgba(255, 255, 255, 0.98);
-        border-top: 3px solid #333;
-        z-index: 9999;
-        box-shadow: 0 -4px 8px rgba(0,0,0,0.1);
+        border-top: 3px solid #3498db;
+        box-shadow: 0 -4px 12px rgba(0,0,0,0.15);
+        z-index: 10000;
+        gap: 10px;
       }
-
-      .touch-btn {
+      
+      .touch-button {
         flex: 1;
-        padding: 25px 15px;
-        font-size: 20px;
+        padding: 18px 12px;
+        font-size: 17px;
         font-weight: bold;
-        border: 3px solid #333;
+        border: none;
         border-radius: 12px;
         cursor: pointer;
         user-select: none;
         -webkit-user-select: none;
         touch-action: manipulation;
-        transition: all 0.1s;
-        text-align: center;
+        transition: all 0.15s ease;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
       }
-
-      .touch-btn:active {
-        transform: scale(0.95);
-        opacity: 0.8;
+      
+      .touch-button:active {
+        transform: scale(0.96);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
       }
-
-      .touch-btn-left {
-        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+      
+      .touch-button.left {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
         color: white;
       }
-
-      .touch-btn-right {
-        background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);
+      
+      .touch-button.left:active {
+        background: linear-gradient(135deg, #0d7a6f 0%, #2bc763 100%);
+      }
+      
+      .touch-button.right {
+        background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
         color: white;
       }
-
-      .touch-btn-continue {
-        background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
-        color: #000;
-        font-size: 22px;
+      
+      .touch-button.right:active {
+        background: linear-gradient(135deg, #c42839 0%, #d14a37 100%);
       }
-
-      /* IAT trial modifications for mobile */
+      
+      .touch-button.center {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        flex: 1;
+        max-width: 100%;
+      }
+      
+      .touch-button.center:active {
+        background: linear-gradient(135deg, #d676dd 0%, #d94356 100%);
+      }
+      
+      .touch-button-label {
+        display: block;
+        font-size: 13px;
+        margin-top: 4px;
+        opacity: 0.95;
+        font-weight: 600;
+      }
+      
+      /* IAT stimuli */
       .jspsych-iat-stim {
-        margin-bottom: 150px !important;
+        font-size: 48px !important;
+        font-weight: bold;
+        margin: 30px 0 !important;
       }
-
-      .jspsych-content {
-        margin-bottom: 150px;
+      
+      .jspsych-iat-stim img {
+        max-width: 90vw !important;
+        max-height: 40vh !important;
+        height: auto !important;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
       }
-
-      /* Responsive adjustments */
+      
+      /* Mobile responsive */
       @media (max-width: 768px) {
+        body {
+          padding: 5px;
+          padding-bottom: 130px;
+          font-size: 15px;
+        }
+        
         .instructions-text {
           font-size: 16px;
+          padding: 12px;
         }
         
         .instructions-text h1 {
@@ -124,27 +225,87 @@
           font-size: 20px;
         }
         
-        .category-label {
-          padding: 10px;
-          margin: 5px;
-          font-size: 14px;
-        }
-
-        .touch-btn {
-          padding: 20px 10px;
+        .instructions-text h3 {
           font-size: 18px;
         }
-      }
-
-      @media (max-width: 480px) {
-        .touch-btn {
-          padding: 18px 8px;
-          font-size: 16px;
+        
+        .category-label {
+          padding: 12px 8px;
+          margin: 8px 5px;
+          font-size: 15px;
         }
-
+        
+        .category-label h3 {
+          font-size: 16px;
+          margin: 5px 0;
+        }
+        
+        .highlight-box {
+          padding: 15px;
+          margin: 20px 5px;
+        }
+        
+        .highlight-box h3 {
+          font-size: 18px;
+        }
+        
+        .touch-button {
+          padding: 20px 10px;
+          font-size: 15px;
+        }
+        
+        .touch-button-label {
+          font-size: 12px;
+        }
+        
+        .jspsych-iat-stim {
+          font-size: 38px !important;
+        }
+      }
+      
+      @media (max-width: 480px) {
         .instructions-text {
           font-size: 14px;
+          padding: 10px;
         }
+        
+        .touch-button {
+          padding: 18px 8px;
+          font-size: 14px;
+        }
+        
+        .jspsych-iat-stim {
+          font-size: 32px !important;
+        }
+      }
+      
+      /* Animations */
+      .jspsych-content {
+        animation: fadeIn 0.3s ease-in;
+      }
+      
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      
+      /* Data display */
+      #jspsych-data-display {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        max-width: 95%;
+        margin: 20px auto;
+        font-family: monospace;
+        font-size: 12px;
+        overflow-x: auto;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
       }
     </style>
   </head>
@@ -153,480 +314,376 @@
 
   <script>
     // Mobile detection
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
     
-    console.log('Is Mobile:', isMobile);
-
-    // Initialize jsPsych
-    const jsPsych = initJsPsych({
-      on_finish: function() {
-        jsPsych.data.displayData('csv');
-      }
-    });
-
-    // Create timeline
-    const timeline = [];
-
-    // MOBILE: Welcome screen with button
-    if (isMobile) {
-      const welcome = {
-        type: jsPsychHtmlButtonResponse,
-        stimulus: `
-          <div style="font-size: 20px; max-width: 800px; margin: auto; text-align: center; padding-bottom: 100px;">
-            <h1>Prime Minister Popularity IAT</h1>
-            <p>Welcome to this research study on implicit attitudes.</p>
-            <p>In this task, you will categorize photos of Prime Ministers and words.</p>
-            <p>The task takes approximately 5-7 minutes.</p>
-            <br>
-            <p><strong>Tap the button below to continue.</strong></p>
-          </div>
-        `,
-        choices: ['CONTINUE'],
-        button_html: '<button class="jspsych-btn" style="font-size: 22px; padding: 20px 40px; background: #ffc107; border: 3px solid #000; border-radius: 10px; font-weight: bold;">%choice%</button>'
-      };
-      timeline.push(welcome);
-    } else {
-      // DESKTOP: Welcome screen with keyboard
-      const welcome = {
-        type: jsPsychHtmlKeyboardResponse,
-        stimulus: `
-          <div style="font-size: 24px; max-width: 800px; margin: auto; text-align: center;">
-            <h1>Prime Minister Popularity IAT</h1>
-            <p>Welcome to this research study on implicit attitudes.</p>
-            <p>In this task, you will categorize photos of Prime Ministers and words.</p>
-            <p>The task takes approximately 5-7 minutes.</p>
-            <br>
-            <p><strong>Press any key to continue.</strong></p>
-          </div>
-        `
-      };
-      timeline.push(welcome);
-    }
-
-    // MOBILE: Instructions with button
-    if (isMobile) {
-      const instructions = {
-        type: jsPsychHtmlButtonResponse,
-        stimulus: `
-          <div class="instructions-text" style="padding-bottom: 100px;">
-            <h2>Instructions</h2>
-            
-            <p>In this experiment, you will be shown:</p>
-            <ul>
-              <li>Photos of <strong>Narendra Modi</strong></li>
-              <li>Photos of <strong>Previous Prime Ministers</strong></li>
-              <li><strong>Positive</strong> words (e.g., "Lovely", "Joyous")</li>
-              <li><strong>Negative</strong> words (e.g., "Nasty", "Pain")</li>
-            </ul>
-
-            <div style="margin: 20px 0; padding: 20px; background-color: #fff3cd; border-radius: 10px; border: 2px solid #ffc107;">
-              <h3>Your Task:</h3>
-              <p>Use the <strong>LEFT</strong> and <strong>RIGHT</strong> buttons at the bottom to categorize items as quickly and accurately as possible.</p>
-              <p>The categories will appear at the top of the screen.</p>
-            </div>
-
-            <p><strong>If you make an error:</strong> A red X will appear. Simply tap the other button to continue.</p>
-            
-            <p><strong>Important:</strong> Respond as quickly as you can while making as few errors as possible.</p>
-            
-            <br>
-            <p style="text-align: center;"><strong>Tap START when ready to begin.</strong></p>
-          </div>
-        `,
-        choices: ['START'],
-        button_html: '<button class="jspsych-btn" style="font-size: 22px; padding: 20px 40px; background: #28a745; color: white; border: 3px solid #000; border-radius: 10px; font-weight: bold;">%choice%</button>'
-      };
-      timeline.push(instructions);
-    } else {
-      // DESKTOP: Instructions with keyboard
-      const instructions = {
-        type: jsPsychHtmlKeyboardResponse,
-        stimulus: `
-          <div class="instructions-text">
-            <h2>Instructions</h2>
-            
-            <p>In this experiment, you will be shown:</p>
-            <ul>
-              <li>Photos of <strong>Narendra Modi</strong></li>
-              <li>Photos of <strong>Previous Prime Ministers</strong></li>
-              <li><strong>Positive</strong> words (e.g., "Lovely", "Joyous")</li>
-              <li><strong>Negative</strong> words (e.g., "Nasty", "Pain")</li>
-            </ul>
-
-            <div style="margin: 30px 0; padding: 25px; background-color: #fff3cd; border-radius: 10px; border: 2px solid #ffc107;">
-              <h3>Your Task:</h3>
-              <p>Use the <strong>E</strong> and <strong>I</strong> keys to categorize items as quickly and accurately as possible.</p>
-              <p>The categories that share a response key will appear at the top of the screen.</p>
-            </div>
-
-            <p><strong>If you make an error:</strong> A red X will appear. Simply press the other key to continue.</p>
-            
-            <p><strong>Important:</strong> Respond as quickly as you can while making as few errors as possible.</p>
-            
-            <br>
-            <p style="text-align: center;"><strong>Press SPACEBAR when ready to begin.</strong></p>
-          </div>
-        `,
-        choices: [' ']
-      };
-      timeline.push(instructions);
-    }
-
-    // Define image stimuli - FIXED FILE EXTENSIONS
-    const modi_images = [
-      'imagesmodi1.jpg.jpeg',
-      'imagesmodi2.jpg.jpeg',
-      'imagesmodi3.jpg.jpeg',
-      'imagesmodi4.jpg.jpeg'
-    ];
-
-    const previous_pm_images = [
-      'imagesprevious1.jpg.jpeg',
-      'imagesprevious2.jpg.jpeg',
-      'imagesprevious3.jpg.jpeg',
-      'imagesprevious4.jpg.jpeg'
-    ];
-
-    // Define word stimuli
-    const positive_words = [
-      'Delightful', 'Enjoy', 'Joyous', 'Lovely', 
-      'Pleasing', 'Glorious', 'Laughter', 'Beautiful', 'Spectacular'
-    ];
-
-    const negative_words = [
-      'Yucky', 'Disgust', 'Humiliate', 'Tragic', 'Nasty', 
-      'Failure', 'Agony', 'Pain', 'Rotten'
-    ];
-
-    // Helper function to add touch buttons
-    function addTouchButtons(leftLabel, rightLabel) {
-      if (!isMobile) return;
+    console.log('Device:', isMobile ? 'Mobile' : 'Desktop');
+    
+    // Touch button management
+    let currentTouchButtons = null;
+    
+    function simulateKeyPress(key) {
+      const event = new KeyboardEvent('keydown', {
+        key: key,
+        code: key === 'e' ? 'KeyE' : (key === 'i' ? 'KeyI' : 'Space'),
+        keyCode: key === 'e' ? 69 : (key === 'i' ? 73 : 32),
+        which: key === 'e' ? 69 : (key === 'i' ? 73 : 32),
+        bubbles: true,
+        cancelable: true
+      });
+      document.dispatchEvent(event);
       
-      setTimeout(() => {
-        const existing = document.querySelector('.touch-response-buttons');
-        if (existing) existing.remove();
-
-        const btnContainer = document.createElement('div');
-        btnContainer.className = 'touch-response-buttons';
-        
+      const eventUp = new KeyboardEvent('keyup', {
+        key: key,
+        code: key === 'e' ? 'KeyE' : (key === 'i' ? 'KeyI' : 'Space'),
+        keyCode: key === 'e' ? 69 : (key === 'i' ? 73 : 32),
+        which: key === 'e' ? 69 : (key === 'i' ? 73 : 32),
+        bubbles: true,
+        cancelable: true
+      });
+      document.dispatchEvent(eventUp);
+    }
+    
+    function createTouchButtons(config) {
+      removeTouchButtons();
+      
+      const container = document.createElement('div');
+      container.className = 'touch-buttons';
+      container.id = 'touch-buttons';
+      
+      if (config.type === 'continue') {
+        const btn = document.createElement('button');
+        btn.className = 'touch-button center';
+        btn.innerHTML = `<div style="font-size: 20px;">▶</div><span class="touch-button-label">${config.label || 'CONTINUE'}</span>`;
+        btn.onclick = (e) => {
+          e.preventDefault();
+          simulateKeyPress(' ');
+        };
+        container.appendChild(btn);
+      } else if (config.type === 'choice') {
         const leftBtn = document.createElement('button');
-        leftBtn.className = 'touch-btn touch-btn-left';
-        leftBtn.innerHTML = `<div style="font-size: 24px; margin-bottom: 5px;">E</div><div>${leftLabel}</div>`;
-        leftBtn.onclick = () => {
-          document.dispatchEvent(new KeyboardEvent('keydown', {key: 'e', keyCode: 69, which: 69, bubbles: true}));
+        leftBtn.className = 'touch-button left';
+        leftBtn.innerHTML = `<div style="font-size: 18px;">◀ E</div><span class="touch-button-label">${config.leftLabel}</span>`;
+        leftBtn.onclick = (e) => {
+          e.preventDefault();
+          simulateKeyPress('e');
         };
         
         const rightBtn = document.createElement('button');
-        rightBtn.className = 'touch-btn touch-btn-right';
-        rightBtn.innerHTML = `<div style="font-size: 24px; margin-bottom: 5px;">I</div><div>${rightLabel}</div>`;
-        rightBtn.onclick = () => {
-          document.dispatchEvent(new KeyboardEvent('keydown', {key: 'i', keyCode: 73, which: 73, bubbles: true}));
+        rightBtn.className = 'touch-button right';
+        rightBtn.innerHTML = `<div style="font-size: 18px;">I ▶</div><span class="touch-button-label">${config.rightLabel}</span>`;
+        rightBtn.onclick = (e) => {
+          e.preventDefault();
+          simulateKeyPress('i');
         };
         
-        btnContainer.appendChild(leftBtn);
-        btnContainer.appendChild(rightBtn);
-        document.body.appendChild(btnContainer);
-      }, 100);
-    }
-
-    function addContinueButton() {
-      if (!isMobile) return;
+        container.appendChild(leftBtn);
+        container.appendChild(rightBtn);
+      }
       
-      setTimeout(() => {
-        const existing = document.querySelector('.touch-response-buttons');
-        if (existing) existing.remove();
-
-        const btnContainer = document.createElement('div');
-        btnContainer.className = 'touch-response-buttons';
-        
-        const continueBtn = document.createElement('button');
-        continueBtn.className = 'touch-btn touch-btn-continue';
-        continueBtn.textContent = 'CONTINUE';
-        continueBtn.onclick = () => {
-          document.dispatchEvent(new KeyboardEvent('keydown', {key: ' ', keyCode: 32, which: 32, bubbles: true}));
-        };
-        
-        btnContainer.appendChild(continueBtn);
-        document.body.appendChild(btnContainer);
-      }, 100);
+      document.body.appendChild(container);
+      currentTouchButtons = container;
     }
-
+    
     function removeTouchButtons() {
-      if (!isMobile) return;
-      const existing = document.querySelector('.touch-response-buttons');
-      if (existing) existing.remove();
+      const existing = document.getElementById('touch-buttons');
+      if (existing) {
+        existing.remove();
+      }
+      currentTouchButtons = null;
     }
 
-    // Block 1: Practice categorizing PMs
-    if (isMobile) {
-      const pm_practice_instructions = {
-        type: jsPsychHtmlButtonResponse,
-        stimulus: `
-          <div class="instructions-text" style="text-align: center; padding-bottom: 100px;">
-            <h2>Practice: Categorize Prime Ministers</h2>
-            <br>
-            <div style="display: flex; justify-content: space-around; max-width: 600px; margin: 20px auto; flex-wrap: wrap;">
-              <div class="category-label" style="background: #d4edda;">
-                <p><strong>LEFT Button (E)</strong></p>
-                <h3>Narendra Modi</h3>
-              </div>
-              <div class="category-label" style="background: #f8d7da;">
-                <p><strong>RIGHT Button (I)</strong></p>
-                <h3>Previous PMs</h3>
-              </div>
-            </div>
-            <br>
-            <p><strong>Tap START to begin.</strong></p>
+    // Initialize jsPsych with data collection
+    const jsPsych = initJsPsych({
+      on_finish: function() {
+        removeTouchButtons();
+        
+        const allData = jsPsych.data.get();
+        const iatData = allData.filter({trial_type: 'iat-image'}).union(
+          allData.filter({trial_type: 'iat-html'})
+        );
+        
+        const csvData = iatData.csv();
+        
+        document.querySelector('#jspsych-data-display').innerHTML = `
+          <h2 style="color: #2c3e50; margin-top: 0;">Experiment Complete - Data Summary</h2>
+          <p style="font-family: Arial; font-size: 14px; margin-bottom: 15px;">
+            <strong>Total trials recorded:</strong> ${iatData.count()}<br>
+            <strong>Participant ID:</strong> ${Date.now()}<br>
+            <strong>Completion time:</strong> ${new Date().toLocaleString()}
+          </p>
+          <button onclick="downloadData()" style="
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 15px;
+            font-weight: bold;
+          ">📥 Download Data (CSV)</button>
+          <div style="max-height: 400px; overflow-y: auto; background: #f8f9fa; padding: 10px; border-radius: 5px;">
+            <pre style="margin: 0; white-space: pre-wrap; word-wrap: break-word;">${csvData}</pre>
           </div>
-        `,
-        choices: ['START'],
-        button_html: '<button class="jspsych-btn" style="font-size: 22px; padding: 20px 40px; background: #28a745; color: white; border: 3px solid #000; border-radius: 10px; font-weight: bold;">%choice%</button>'
-      };
-      timeline.push(pm_practice_instructions);
-    } else {
-      const pm_practice_instructions = {
+        `;
+        
+        window.experimentData = csvData;
+      }
+    });
+    
+    function downloadData() {
+      const blob = new Blob([window.experimentData], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `IAT_data_${Date.now()}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    }
+
+    const timeline = [];
+
+    // Welcome (MOBILE COMPATIBLE)
+    const welcome = {
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus: `
+        <div style="text-align: center; max-width: 800px; margin: 20px auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+          <h1 style="color: #2c3e50; margin-bottom: 20px;">Prime Minister Popularity IAT</h1>
+          <p style="font-size: 18px; line-height: 1.6; color: #34495e;">Welcome to this research study on implicit attitudes.</p>
+          <p style="font-size: 18px; line-height: 1.6; color: #34495e;">In this task, you will categorize photos of Prime Ministers and words.</p>
+          <p style="font-size: 18px; line-height: 1.6; color: #34495e;">The task takes approximately 5-7 minutes.</p>
+          <div style="margin: 30px 0; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; color: white;">
+            <p style="font-size: 20px; margin: 0;">
+              ${isMobile ? '📱 Tap CONTINUE below to proceed' : '⌨️ Press any key to continue'}
+            </p>
+          </div>
+        </div>
+      `,
+      on_load: function() {
+        if (isMobile) {
+          createTouchButtons({type: 'continue', label: 'BEGIN EXPERIMENT'});
+        }
+      },
+      on_finish: function() {
+        removeTouchButtons();
+      }
+    };
+    timeline.push(welcome);
+
+    // Instructions
+    const instructions = {
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus: `
+        <div class="instructions-text">
+          <h2>📋 Instructions</h2>
+          
+          <p>In this experiment, you will be shown:</p>
+          <ul>
+            <li>Photos of <strong>Narendra Modi</strong></li>
+            <li>Photos of <strong>Dr Manmohan Singh</strong></li>
+            <li><strong>Positive</strong> words (e.g., "wonderful", "happy")</li>
+            <li><strong>Negative</strong> words (e.g., "terrible", "awful")</li>
+          </ul>
+
+          <div class="highlight-box">
+            <h3>Your Task:</h3>
+            <p style="margin: 10px 0;">${isMobile ? 
+              'Use the <strong>LEFT</strong> and <strong>RIGHT</strong> buttons at the bottom to categorize items as quickly and accurately as possible.' :
+              'Use the <strong>E</strong> and <strong>I</strong> keys to categorize items as quickly and accurately as possible.'
+            }</p>
+            <p style="margin: 10px 0;">The categories will appear at the top of the screen.</p>
+          </div>
+
+          <p><strong>If you make an error:</strong> A red ❌ will appear. Simply press the other ${isMobile ? 'button' : 'key'} to continue.</p>
+          
+          <p><strong>Important:</strong> Respond as quickly as you can while making as few errors as possible.</p>
+          
+          <div style="text-align: center; margin-top: 30px; font-size: 20px; font-weight: bold; color: #2c3e50;">
+            ${isMobile ? '👆 Tap CONTINUE when ready' : '⌨️ Press SPACE when ready'}
+          </div>
+        </div>
+      `,
+      choices: [' '],
+      on_load: function() {
+        if (isMobile) {
+          createTouchButtons({type: 'continue', label: 'START PRACTICE'});
+        }
+      },
+      on_finish: function() {
+        removeTouchButtons();
+      }
+    };
+    timeline.push(instructions);
+
+    // Image stimuli - UPDATE THESE TO MATCH YOUR UPLOADED FILES
+    const modi_images = [
+      'modi1.jpg.jpeg',      // Changed from images/modi1.jpg.jpeg
+      'modi2.jpg.jpeg',
+      'modi3.jpg.jpeg',
+      'modi4.jpg.jpeg'
+    ];
+
+    const manmohan_images = [
+      'manmohan1.jpg',  // Changed from images/manmohan1.jpg
+      'manmohan2.jpg',
+      'manmohan3.jpg',
+      'manmohan4.jpg'
+    ];
+
+    // Word stimuli
+    const positive_words = [
+      'Wonderful', 'Happy', 'Joy', 'Love', 'Peace', 
+      'Pleasure', 'Glorious', 'Laughter', 'Success', 'Hope'
+    ];
+
+    const negative_words = [
+      'Terrible', 'Awful', 'Horrible', 'Evil', 'Nasty', 
+      'Failure', 'Agony', 'Pain', 'Disaster', 'Tragedy'
+    ];
+
+    // Helper function for creating instructions
+    function createInstructions(title, leftLabel, rightLabel, buttonLabel) {
+      return {
         type: jsPsychHtmlKeyboardResponse,
         stimulus: `
           <div class="instructions-text" style="text-align: center;">
-            <h2>Practice: Categorize Prime Ministers</h2>
+            <h2>${title}</h2>
             <br>
-            <div style="display: flex; justify-content: space-around; max-width: 600px; margin: 30px auto;">
-              <div class="category-label">
-                <p>Press <strong>E</strong> for:</p>
-                <h3>Narendra Modi</h3>
+            <div style="display: flex; justify-content: space-around; max-width: 650px; margin: 20px auto; flex-wrap: wrap;">
+              <div class="category-label" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white; border: none;">
+                <p>Press <strong>${isMobile ? 'LEFT' : 'E'}</strong> for:</p>
+                <h3 style="color: white;">${leftLabel}</h3>
               </div>
-              <div class="category-label">
-                <p>Press <strong>I</strong> for:</p>
-                <h3>Previous PMs</h3>
+              <div class="category-label" style="background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%); color: white; border: none;">
+                <p>Press <strong>${isMobile ? 'RIGHT' : 'I'}</strong> for:</p>
+                <h3 style="color: white;">${rightLabel}</h3>
               </div>
             </div>
             <br>
-            <p><strong>Press SPACEBAR to start.</strong></p>
+            <p style="font-size: 20px; font-weight: bold;">${isMobile ? '👆 Tap START' : '⌨️ Press SPACE'}</p>
           </div>
         `,
-        choices: [' ']
+        choices: [' '],
+        on_load: function() {
+          if (isMobile) {
+            createTouchButtons({type: 'continue', label: buttonLabel});
+          }
+        },
+        on_finish: function() {
+          removeTouchButtons();
+        }
       };
-      timeline.push(pm_practice_instructions);
     }
 
-    const pm_practice = {
-      type: jsPsychIatImage,
-      stimulus: jsPsych.timelineVariable('stimulus'),
-      stim_key_association: jsPsych.timelineVariable('stim_key_association'),
-      html_when_wrong: '<span style="color: red; font-size: 80px; font-weight: bold;">X</span>',
-      bottom_instructions: `<p>${isMobile ? 'LEFT' : 'E'} = <strong>Modi</strong> | ${isMobile ? 'RIGHT' : 'I'} = <strong>Previous PMs</strong></p>`,
-      force_correct_key_press: true,
-      display_feedback: true,
-      trial_duration: 3000,
-      left_category_key: 'e',
-      right_category_key: 'i',
-      left_category_label: ['Narendra Modi'],
-      right_category_label: ['Previous PMs'],
-      response_ends_trial: true,
-      stimulus_width: isMobile ? 280 : 400,
-      on_load: () => addTouchButtons('Modi', 'Previous PMs'),
-      on_finish: () => removeTouchButtons()
-    };
+    // Helper for image trials
+    function createImageTrial(block, leftCat, rightCat, leftShort, rightShort, critical = false) {
+      return {
+        type: jsPsychIatImage,
+        stimulus: jsPsych.timelineVariable('stimulus'),
+        stim_key_association: jsPsych.timelineVariable('stim_key_association'),
+        html_when_wrong: '<span style="color: #e74c3c; font-size: 80px;">❌</span>',
+        bottom_instructions: `<p style="font-size: 17px; font-weight: bold;">${isMobile ? 'LEFT' : 'E'} = ${leftCat} | ${isMobile ? 'RIGHT' : 'I'} = ${rightCat}</p>`,
+        force_correct_key_press: true,
+        display_feedback: true,
+        trial_duration: 3000,
+        left_category_key: 'e',
+        right_category_key: 'i',
+        left_category_label: leftCat.split('/'),
+        right_category_label: rightCat.split('/'),
+        response_ends_trial: true,
+        stimulus_width: 350,
+        data: {
+          block: block,
+          item_type: 'image',
+          critical_trial: critical,
+          participant_id: Date.now()
+        },
+        on_load: function() {
+          if (isMobile) {
+            createTouchButtons({
+              type: 'choice',
+              leftLabel: leftShort,
+              rightLabel: rightShort
+            });
+          }
+        }
+      };
+    }
 
-    const pm_practice_procedure = {
-      timeline: [pm_practice],
+    // Helper for word trials
+    function createWordTrial(block, leftCat, rightCat, leftShort, rightShort, critical = false) {
+      return {
+        type: jsPsychIatHtml,
+        stimulus: jsPsych.timelineVariable('stimulus'),
+        stim_key_association: jsPsych.timelineVariable('stim_key_association'),
+        html_when_wrong: '<span style="color: #e74c3c; font-size: 80px;">❌</span>',
+        bottom_instructions: `<p style="font-size: 17px; font-weight: bold;">${isMobile ? 'LEFT' : 'E'} = ${leftCat} | ${isMobile ? 'RIGHT' : 'I'} = ${rightCat}</p>`,
+        force_correct_key_press: true,
+        display_feedback: true,
+        trial_duration: 3000,
+        left_category_key: 'e',
+        right_category_key: 'i',
+        left_category_label: leftCat.split('/'),
+        right_category_label: rightCat.split('/'),
+        response_ends_trial: true,
+        data: {
+          block: block,
+          item_type: 'word',
+          critical_trial: critical,
+          participant_id: Date.now()
+        },
+        on_load: function() {
+          if (isMobile) {
+            createTouchButtons({
+              type: 'choice',
+              leftLabel: leftShort,
+              rightLabel: rightShort
+            });
+          }
+        }
+      };
+    }
+
+    // BLOCK 1: PM Practice
+    timeline.push(createInstructions('Practice: Categorize Prime Ministers', 'Narendra Modi', 'Dr Manmohan Singh', 'START PRACTICE'));
+    timeline.push({
+      timeline: [createImageTrial('pm_practice', 'Modi', 'Manmohan', 'Modi', 'Manmohan')],
       timeline_variables: [
         ...modi_images.map(img => ({stimulus: img, stim_key_association: 'left'})),
-        ...previous_pm_images.map(img => ({stimulus: img, stim_key_association: 'right'}))
+        ...manmohan_images.map(img => ({stimulus: img, stim_key_association: 'right'}))
       ],
       randomize_order: true,
       repetitions: 2
-    };
-    timeline.push(pm_practice_procedure);
+    });
 
-    // Block 2: Practice categorizing words
-    if (isMobile) {
-      const word_practice_instructions = {
-        type: jsPsychHtmlButtonResponse,
-        stimulus: `
-          <div class="instructions-text" style="text-align: center; padding-bottom: 100px;">
-            <h2>Practice: Categorize Words</h2>
-            <br>
-            <div style="display: flex; justify-content: space-around; max-width: 600px; margin: 20px auto; flex-wrap: wrap;">
-              <div class="category-label" style="background: #d4edda;">
-                <p><strong>LEFT Button (E)</strong></p>
-                <h3>Positive</h3>
-              </div>
-              <div class="category-label" style="background: #f8d7da;">
-                <p><strong>RIGHT Button (I)</strong></p>
-                <h3>Negative</h3>
-              </div>
-            </div>
-            <br>
-            <p><strong>Tap START to begin.</strong></p>
-          </div>
-        `,
-        choices: ['START'],
-        button_html: '<button class="jspsych-btn" style="font-size: 22px; padding: 20px 40px; background: #28a745; color: white; border: 3px solid #000; border-radius: 10px; font-weight: bold;">%choice%</button>'
-      };
-      timeline.push(word_practice_instructions);
-    } else {
-      const word_practice_instructions = {
-        type: jsPsychHtmlKeyboardResponse,
-        stimulus: `
-          <div class="instructions-text" style="text-align: center;">
-            <h2>Practice: Categorize Words</h2>
-            <br>
-            <div style="display: flex; justify-content: space-around; max-width: 600px; margin: 30px auto;">
-              <div class="category-label">
-                <p>Press <strong>E</strong> for:</p>
-                <h3>Positive</h3>
-              </div>
-              <div class="category-label">
-                <p>Press <strong>I</strong> for:</p>
-                <h3>Negative</h3>
-              </div>
-            </div>
-            <br>
-            <p><strong>Press SPACEBAR to start.</strong></p>
-          </div>
-        `,
-        choices: [' ']
-      };
-      timeline.push(word_practice_instructions);
-    }
-
-    const word_practice = {
-      type: jsPsychIatHtml,
-      stimulus: jsPsych.timelineVariable('stimulus'),
-      stim_key_association: jsPsych.timelineVariable('stim_key_association'),
-      html_when_wrong: '<span style="color: red; font-size: 80px; font-weight: bold;">X</span>',
-      bottom_instructions: `<p>${isMobile ? 'LEFT' : 'E'} = <strong>Positive</strong> | ${isMobile ? 'RIGHT' : 'I'} = <strong>Negative</strong></p>`,
-      force_correct_key_press: true,
-      display_feedback: true,
-      trial_duration: 3000,
-      left_category_key: 'e',
-      right_category_key: 'i',
-      left_category_label: ['Positive'],
-      right_category_label: ['Negative'],
-      response_ends_trial: true,
-      on_load: () => addTouchButtons('Positive', 'Negative'),
-      on_finish: () => removeTouchButtons()
-    };
-
-    const word_practice_procedure = {
-      timeline: [word_practice],
+    // BLOCK 2: Word Practice
+    timeline.push(createInstructions('Practice: Categorize Words', 'Positive Words', 'Negative Words', 'START PRACTICE'));
+    timeline.push({
+      timeline: [createWordTrial('word_practice', 'Positive', 'Negative', 'Positive', 'Negative')],
       timeline_variables: [
         ...positive_words.map(word => ({stimulus: word, stim_key_association: 'left'})),
         ...negative_words.map(word => ({stimulus: word, stim_key_association: 'right'}))
       ],
       randomize_order: true,
       repetitions: 1
-    };
-    timeline.push(word_practice_procedure);
+    });
 
-    // Block 3: Combined practice
-    if (isMobile) {
-      const combined1_instructions = {
-        type: jsPsychHtmlButtonResponse,
-        stimulus: `
-          <div class="instructions-text" style="text-align: center; padding-bottom: 100px;">
-            <h2>Combined Task</h2>
-            <p>Now combine both tasks. Use the same buttons for both photos and words.</p>
-            <br>
-            <div style="display: flex; justify-content: space-around; max-width: 700px; margin: 20px auto; flex-wrap: wrap;">
-              <div class="category-label" style="background-color: #d4edda;">
-                <p><strong>LEFT (E)</strong></p>
-                <h3>Modi OR Positive</h3>
-              </div>
-              <div class="category-label" style="background-color: #f8d7da;">
-                <p><strong>RIGHT (I)</strong></p>
-                <h3>Previous PMs OR Negative</h3>
-              </div>
-            </div>
-            <br>
-            <p><strong>Tap START to begin.</strong></p>
-          </div>
-        `,
-        choices: ['START'],
-        button_html: '<button class="jspsych-btn" style="font-size: 22px; padding: 20px 40px; background: #28a745; color: white; border: 3px solid #000; border-radius: 10px; font-weight: bold;">%choice%</button>'
-      };
-      timeline.push(combined1_instructions);
-    } else {
-      const combined1_instructions = {
-        type: jsPsychHtmlKeyboardResponse,
-        stimulus: `
-          <div class="instructions-text" style="text-align: center;">
-            <h2>Combined Task</h2>
-            <p>Now combine both tasks. Use the same keys for both photos and words.</p>
-            <br>
-            <div style="display: flex; justify-content: space-around; max-width: 700px; margin: 30px auto;">
-              <div class="category-label" style="background-color: #d4edda;">
-                <p>Press <strong>E</strong> for:</p>
-                <h3>Narendra Modi</h3>
-                <h3>OR</h3>
-                <h3>Positive</h3>
-              </div>
-              <div class="category-label" style="background-color: #f8d7da;">
-                <p>Press <strong>I</strong> for:</p>
-                <h3>Previous PMs</h3>
-                <h3>OR</h3>
-                <h3>Negative</h3>
-              </div>
-            </div>
-            <br>
-            <p><strong>Press SPACEBAR to start.</strong></p>
-          </div>
-        `,
-        choices: [' ']
-      };
-      timeline.push(combined1_instructions);
-    }
-
-    const combined1_practice_images = {
-      type: jsPsychIatImage,
-      stimulus: jsPsych.timelineVariable('stimulus'),
-      stim_key_association: jsPsych.timelineVariable('stim_key_association'),
-      html_when_wrong: '<span style="color: red; font-size: 80px; font-weight: bold;">X</span>',
-      bottom_instructions: `<p>${isMobile ? 'LEFT' : 'E'} = <strong>Modi/Positive</strong> | ${isMobile ? 'RIGHT' : 'I'} = <strong>Previous/Negative</strong></p>`,
-      force_correct_key_press: true,
-      display_feedback: true,
-      trial_duration: 3000,
-      left_category_key: 'e',
-      right_category_key: 'i',
-      left_category_label: ['Modi', 'Positive'],
-      right_category_label: ['Previous PMs', 'Negative'],
-      response_ends_trial: true,
-      stimulus_width: isMobile ? 280 : 400,
-      on_load: () => addTouchButtons('Modi/Positive', 'Previous/Negative'),
-      on_finish: () => removeTouchButtons()
-    };
-
-    const combined1_practice_words = {
-      type: jsPsychIatHtml,
-      stimulus: jsPsych.timelineVariable('stimulus'),
-      stim_key_association: jsPsych.timelineVariable('stim_key_association'),
-      html_when_wrong: '<span style="color: red; font-size: 80px; font-weight: bold;">X</span>',
-      bottom_instructions: `<p>${isMobile ? 'LEFT' : 'E'} = <strong>Modi/Positive</strong> | ${isMobile ? 'RIGHT' : 'I'} = <strong>Previous/Negative</strong></p>`,
-      force_correct_key_press: true,
-      display_feedback: true,
-      trial_duration: 3000,
-      left_category_key: 'e',
-      right_category_key: 'i',
-      left_category_label: ['Modi', 'Positive'],
-      right_category_label: ['Previous PMs', 'Negative'],
-      response_ends_trial: true,
-      on_load: () => addTouchButtons('Modi/Positive', 'Previous/Negative'),
-      on_finish: () => removeTouchButtons()
-    };
-
-    const combined1_practice_procedure = {
+    // BLOCK 3 & 4: Combined (Compatible)
+    timeline.push(createInstructions('Combined Task', 'Modi OR Positive', 'Manmohan OR Negative', 'START COMBINED'));
+    timeline.push({
       timeline: [
         {
-          timeline: [combined1_practice_images],
+          timeline: [createImageTrial('combined1_practice', 'Modi/Positive', 'Manmohan/Negative', 'Modi/Pos', 'Man/Neg')],
           timeline_variables: [
             ...modi_images.map(img => ({stimulus: img, stim_key_association: 'left'})),
-            ...previous_pm_images.map(img => ({stimulus: img, stim_key_association: 'right'}))
+            ...manmohan_images.map(img => ({stimulus: img, stim_key_association: 'right'}))
           ],
           randomize_order: true
         },
         {
-          timeline: [combined1_practice_words],
+          timeline: [createWordTrial('combined1_practice', 'Modi/Positive', 'Manmohan/Negative', 'Modi/Pos', 'Man/Neg')],
           timeline_variables: [
             ...positive_words.map(word => ({stimulus: word, stim_key_association: 'left'})),
             ...negative_words.map(word => ({stimulus: word, stim_key_association: 'right'}))
@@ -636,62 +693,22 @@
       ],
       randomize_order: true,
       repetitions: 1
-    };
-    timeline.push(combined1_practice_procedure);
-
-    // Block 4: Combined TEST
-    const combined1_test_images = {
-      type: jsPsychIatImage,
-      stimulus: jsPsych.timelineVariable('stimulus'),
-      stim_key_association: jsPsych.timelineVariable('stim_key_association'),
-      html_when_wrong: '<span style="color: red; font-size: 80px; font-weight: bold;">X</span>',
-      bottom_instructions: `<p>${isMobile ? 'LEFT' : 'E'} = <strong>Modi/Positive</strong> | ${isMobile ? 'RIGHT' : 'I'} = <strong>Previous/Negative</strong></p>`,
-      force_correct_key_press: true,
-      display_feedback: true,
-      trial_duration: 3000,
-      left_category_key: 'e',
-      right_category_key: 'i',
-      left_category_label: ['Modi', 'Positive'],
-      right_category_label: ['Previous PMs', 'Negative'],
-      response_ends_trial: true,
-      stimulus_width: isMobile ? 280 : 400,
-      data: {block: 'compatible', item_type: 'image'},
-      on_load: () => addTouchButtons('Modi/Positive', 'Previous/Negative'),
-      on_finish: () => removeTouchButtons()
-    };
-
-    const combined1_test_words = {
-      type: jsPsychIatHtml,
-      stimulus: jsPsych.timelineVariable('stimulus'),
-      stim_key_association: jsPsych.timelineVariable('stim_key_association'),
-      html_when_wrong: '<span style="color: red; font-size: 80px; font-weight: bold;">X</span>',
-      bottom_instructions: `<p>${isMobile ? 'LEFT' : 'E'} = <strong>Modi/Positive</strong> | ${isMobile ? 'RIGHT' : 'I'} = <strong>Previous/Negative</strong></p>`,
-      force_correct_key_press: true,
-      display_feedback: true,
-      trial_duration: 3000,
-      left_category_key: 'e',
-      right_category_key: 'i',
-      left_category_label: ['Modi', 'Positive'],
-      right_category_label: ['Previous PMs', 'Negative'],
-      response_ends_trial: true,
-      data: {block: 'compatible', item_type: 'word'},
-      on_load: () => addTouchButtons('Modi/Positive', 'Previous/Negative'),
-      on_finish: () => removeTouchButtons()
-    };
-
-    const combined1_test_procedure = {
+    });
+    
+    // CRITICAL TEST BLOCK
+    timeline.push({
       timeline: [
         {
-          timeline: [combined1_test_images],
+          timeline: [createImageTrial('compatible', 'Modi/Positive', 'Manmohan/Negative', 'Modi/Pos', 'Man/Neg', true)],
           timeline_variables: [
             ...modi_images.map(img => ({stimulus: img, stim_key_association: 'left'})),
-            ...previous_pm_images.map(img => ({stimulus: img, stim_key_association: 'right'}))
+            ...manmohan_images.map(img => ({stimulus: img, stim_key_association: 'right'}))
           ],
           randomize_order: true,
           repetitions: 2
         },
         {
-          timeline: [combined1_test_words],
+          timeline: [createWordTrial('compatible', 'Modi/Positive', 'Manmohan/Negative', 'Modi/Pos', 'Man/Neg', true)],
           timeline_variables: [
             ...positive_words.map(word => ({stimulus: word, stim_key_association: 'left'})),
             ...negative_words.map(word => ({stimulus: word, stim_key_association: 'right'}))
@@ -701,198 +718,64 @@
         }
       ],
       randomize_order: true
-    };
-    timeline.push(combined1_test_procedure);
+    });
 
-    // Block 5: Reversed PM categorization
-    if (isMobile) {
-      const pm_reversed_instructions = {
-        type: jsPsychHtmlButtonResponse,
-        stimulus: `
-          <div class="instructions-text" style="text-align: center; padding-bottom: 100px;">
-            <h2 style="color: #d9534f;">⚠️ CATEGORIES REVERSED!</h2>
-            <p style="font-size: 20px;">The categories have switched sides.</p>
-            <br>
-            <div style="display: flex; justify-content: space-around; max-width: 600px; margin: 20px auto; flex-wrap: wrap;">
-              <div class="category-label" style="background-color: #fff3cd; border: 3px solid #ffc107;">
-                <p><strong>LEFT (E)</strong></p>
-                <h3>Previous PMs</h3>
-              </div>
-              <div class="category-label" style="background-color: #fff3cd; border: 3px solid #ffc107;">
-                <p><strong>RIGHT (I)</strong></p>
-                <h3>Narendra Modi</h3>
-              </div>
+    // BLOCK 5: Reversed PM
+    timeline.push({
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus: `
+        <div class="instructions-text" style="text-align: center;">
+          <h2 style="color: #e74c3c;">⚠️ ATTENTION: Categories Reversed!</h2>
+          <p style="font-size: 20px; font-weight: bold;">The categories have switched sides.</p>
+          <br>
+          <div style="display: flex; justify-content: space-around; max-width: 650px; margin: 20px auto; flex-wrap: wrap;">
+            <div class="category-label" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white; border: 3px solid #f39c12;">
+              <p>Press <strong>${isMobile ? 'LEFT' : 'E'}</strong> for:</p>
+              <h3 style="color: white;">Dr Manmohan Singh</h3>
             </div>
-            <br>
-            <p><strong>Tap START to begin.</strong></p>
-          </div>
-        `,
-        choices: ['START'],
-        button_html: '<button class="jspsych-btn" style="font-size: 22px; padding: 20px 40px; background: #ffc107; color: #000; border: 3px solid #000; border-radius: 10px; font-weight: bold;">%choice%</button>'
-      };
-      timeline.push(pm_reversed_instructions);
-    } else {
-      const pm_reversed_instructions = {
-        type: jsPsychHtmlKeyboardResponse,
-        stimulus: `
-          <div class="instructions-text" style="text-align: center;">
-            <h2 style="color: #d9534f;">ATTENTION: Categories Reversed!</h2>
-            <p style="font-size: 22px;">The categories have switched sides.</p>
-            <br>
-            <div style="display: flex; justify-content: space-around; max-width: 600px; margin: 30px auto;">
-              <div class="category-label" style="background-color: #fff3cd; border: 3px solid #ffc107;">
-                <p>Press <strong>E</strong> for:</p>
-                <h3>Previous PMs</h3>
-              </div>
-              <div class="category-label" style="background-color: #fff3cd; border: 3px solid #ffc107;">
-                <p>Press <strong>I</strong> for:</p>
-                <h3>Narendra Modi</h3>
-              </div>
+            <div class="category-label" style="background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%); color: white; border: 3px solid #f39c12;">
+              <p>Press <strong>${isMobile ? 'RIGHT' : 'I'}</strong> for:</p>
+              <h3 style="color: white;">Narendra Modi</h3>
             </div>
-            <br>
-            <p><strong>Press SPACEBAR to start.</strong></p>
           </div>
-        `,
-        choices: [' ']
-      };
-      timeline.push(pm_reversed_instructions);
-    }
-
-    const pm_reversed_practice = {
-      type: jsPsychIatImage,
-      stimulus: jsPsych.timelineVariable('stimulus'),
-      stim_key_association: jsPsych.timelineVariable('stim_key_association'),
-      html_when_wrong: '<span style="color: red; font-size: 80px; font-weight: bold;">X</span>',
-      bottom_instructions: `<p>${isMobile ? 'LEFT' : 'E'} = <strong>Previous PMs</strong> | ${isMobile ? 'RIGHT' : 'I'} = <strong>Modi</strong></p>`,
-      force_correct_key_press: true,
-      display_feedback: true,
-      trial_duration: 3000,
-      left_category_key: 'e',
-      right_category_key: 'i',
-      left_category_label: ['Previous PMs'],
-      right_category_label: ['Narendra Modi'],
-      response_ends_trial: true,
-      stimulus_width: isMobile ? 280 : 400,
-      on_load: () => addTouchButtons('Previous PMs', 'Modi'),
-      on_finish: () => removeTouchButtons()
-    };
-
-    const pm_reversed_practice_procedure = {
-      timeline: [pm_reversed_practice],
+          <br>
+          <p style="font-size: 20px; font-weight: bold;">${isMobile ? '👆 Tap START' : '⌨️ Press SPACE'}</p>
+        </div>
+      `,
+      choices: [' '],
+      on_load: function() {
+        if (isMobile) {
+          createTouchButtons({type: 'continue', label: 'START REVERSED'});
+        }
+      },
+      on_finish: function() {
+        removeTouchButtons();
+      }
+    });
+    timeline.push({
+      timeline: [createImageTrial('pm_reversed', 'Manmohan', 'Modi', 'Manmohan', 'Modi')],
       timeline_variables: [
         ...modi_images.map(img => ({stimulus: img, stim_key_association: 'right'})),
-        ...previous_pm_images.map(img => ({stimulus: img, stim_key_association: 'left'}))
+        ...manmohan_images.map(img => ({stimulus: img, stim_key_association: 'left'}))
       ],
       randomize_order: true,
       repetitions: 2
-    };
-    timeline.push(pm_reversed_practice_procedure);
+    });
 
-    // Block 6: Combined practice REVERSED
-    if (isMobile) {
-      const combined2_instructions = {
-        type: jsPsychHtmlButtonResponse,
-        stimulus: `
-          <div class="instructions-text" style="text-align: center; padding-bottom: 100px;">
-            <h2>Combined Task - Reversed</h2>
-            <br>
-            <div style="display: flex; justify-content: space-around; max-width: 700px; margin: 20px auto; flex-wrap: wrap;">
-              <div class="category-label" style="background-color: #d4edda;">
-                <p><strong>LEFT (E)</strong></p>
-                <h3>Previous PMs OR Positive</h3>
-              </div>
-              <div class="category-label" style="background-color: #f8d7da;">
-                <p><strong>RIGHT (I)</strong></p>
-                <h3>Modi OR Negative</h3>
-              </div>
-            </div>
-            <br>
-            <p><strong>Tap START to begin.</strong></p>
-          </div>
-        `,
-        choices: ['START'],
-        button_html: '<button class="jspsych-btn" style="font-size: 22px; padding: 20px 40px; background: #28a745; color: white; border: 3px solid #000; border-radius: 10px; font-weight: bold;">%choice%</button>'
-      };
-      timeline.push(combined2_instructions);
-    } else {
-      const combined2_instructions = {
-        type: jsPsychHtmlKeyboardResponse,
-        stimulus: `
-          <div class="instructions-text" style="text-align: center;">
-            <h2>Combined Task - Reversed</h2>
-            <br>
-            <div style="display: flex; justify-content: space-around; max-width: 700px; margin: 30px auto;">
-              <div class="category-label" style="background-color: #d4edda;">
-                <p>Press <strong>E</strong> for:</p>
-                <h3>Previous PMs</h3>
-                <h3>OR</h3>
-                <h3>Positive</h3>
-              </div>
-              <div class="category-label" style="background-color: #f8d7da;">
-                <p>Press <strong>I</strong> for:</p>
-                <h3>Narendra Modi</h3>
-                <h3>OR</h3>
-                <h3>Negative</h3>
-              </div>
-            </div>
-            <br>
-            <p><strong>Press SPACEBAR to start.</strong></p>
-          </div>
-        `,
-        choices: [' ']
-      };
-      timeline.push(combined2_instructions);
-    }
-
-    const combined2_practice_images = {
-      type: jsPsychIatImage,
-      stimulus: jsPsych.timelineVariable('stimulus'),
-      stim_key_association: jsPsych.timelineVariable('stim_key_association'),
-      html_when_wrong: '<span style="color: red; font-size: 80px; font-weight: bold;">X</span>',
-      bottom_instructions: `<p>${isMobile ? 'LEFT' : 'E'} = <strong>Previous/Positive</strong> | ${isMobile ? 'RIGHT' : 'I'} = <strong>Modi/Negative</strong></p>`,
-      force_correct_key_press: true,
-      display_feedback: true,
-      trial_duration: 3000,
-      left_category_key: 'e',
-      right_category_key: 'i',
-      left_category_label: ['Previous PMs', 'Positive'],
-      right_category_label: ['Modi', 'Negative'],
-      response_ends_trial: true,
-      stimulus_width: isMobile ? 280 : 400,
-      on_load: () => addTouchButtons('Previous/Positive', 'Modi/Negative'),
-      on_finish: () => removeTouchButtons()
-    };
-
-    const combined2_practice_words = {
-      type: jsPsychIatHtml,
-      stimulus: jsPsych.timelineVariable('stimulus'),
-      stim_key_association: jsPsych.timelineVariable('stim_key_association'),
-      html_when_wrong: '<span style="color: red; font-size: 80px; font-weight: bold;">X</span>',
-      bottom_instructions: `<p>${isMobile ? 'LEFT' : 'E'} = <strong>Previous/Positive</strong> | ${isMobile ? 'RIGHT' : 'I'} = <strong>Modi/Negative</strong></p>`,
-      force_correct_key_press: true,
-      display_feedback: true,
-      trial_duration: 3000,
-      left_category_key: 'e',
-      right_category_key: 'i',
-      left_category_label: ['Previous PMs', 'Positive'],
-      right_category_label: ['Modi', 'Negative'],
-      response_ends_trial: true,
-      on_load: () => addTouchButtons('Previous/Positive', 'Modi/Negative'),
-      on_finish: () => removeTouchButtons()
-    };
-
-    const combined2_practice_procedure = {
+    // BLOCKS 6 & 7: Combined Reversed
+    timeline.push(createInstructions('Combined Task - Reversed', 'Manmohan OR Positive', 'Modi OR Negative', 'START COMBINED'));
+    timeline.push({
       timeline: [
         {
-          timeline: [combined2_practice_images],
+          timeline: [createImageTrial('combined2_practice', 'Manmohan/Positive', 'Modi/Negative', 'Man/Pos', 'Modi/Neg')],
           timeline_variables: [
             ...modi_images.map(img => ({stimulus: img, stim_key_association: 'right'})),
-            ...previous_pm_images.map(img => ({stimulus: img, stim_key_association: 'left'}))
+            ...manmohan_images.map(img => ({stimulus: img, stim_key_association: 'left'}))
           ],
           randomize_order: true
         },
         {
-          timeline: [combined2_practice_words],
+          timeline: [createWordTrial('combined2_practice', 'Manmohan/Positive', 'Modi/Negative', 'Man/Pos', 'Modi/Neg')],
           timeline_variables: [
             ...positive_words.map(word => ({stimulus: word, stim_key_association: 'left'})),
             ...negative_words.map(word => ({stimulus: word, stim_key_association: 'right'}))
@@ -902,62 +785,22 @@
       ],
       randomize_order: true,
       repetitions: 1
-    };
-    timeline.push(combined2_practice_procedure);
-
-    // Block 7: Combined TEST REVERSED
-    const combined2_test_images = {
-      type: jsPsychIatImage,
-      stimulus: jsPsych.timelineVariable('stimulus'),
-      stim_key_association: jsPsych.timelineVariable('stim_key_association'),
-      html_when_wrong: '<span style="color: red; font-size: 80px; font-weight: bold;">X</span>',
-      bottom_instructions: `<p>${isMobile ? 'LEFT' : 'E'} = <strong>Previous/Positive</strong> | ${isMobile ? 'RIGHT' : 'I'} = <strong>Modi/Negative</strong></p>`,
-      force_correct_key_press: true,
-      display_feedback: true,
-      trial_duration: 3000,
-      left_category_key: 'e',
-      right_category_key: 'i',
-      left_category_label: ['Previous PMs', 'Positive'],
-      right_category_label: ['Modi', 'Negative'],
-      response_ends_trial: true,
-      stimulus_width: isMobile ? 280 : 400,
-      data: {block: 'incompatible', item_type: 'image'},
-      on_load: () => addTouchButtons('Previous/Positive', 'Modi/Negative'),
-      on_finish: () => removeTouchButtons()
-    };
-
-    const combined2_test_words = {
-      type: jsPsychIatHtml,
-      stimulus: jsPsych.timelineVariable('stimulus'),
-      stim_key_association: jsPsych.timelineVariable('stim_key_association'),
-      html_when_wrong: '<span style="color: red; font-size: 80px; font-weight: bold;">X</span>',
-      bottom_instructions: `<p>${isMobile ? 'LEFT' : 'E'} = <strong>Previous/Positive</strong> | ${isMobile ? 'RIGHT' : 'I'} = <strong>Modi/Negative</strong></p>`,
-      force_correct_key_press: true,
-      display_feedback: true,
-      trial_duration: 3000,
-      left_category_key: 'e',
-      right_category_key: 'i',
-      left_category_label: ['Previous PMs', 'Positive'],
-      right_category_label: ['Modi', 'Negative'],
-      response_ends_trial: true,
-      data: {block: 'incompatible', item_type: 'word'},
-      on_load: () => addTouchButtons('Previous/Positive', 'Modi/Negative'),
-      on_finish: () => removeTouchButtons()
-    };
-
-    const combined2_test_procedure = {
+    });
+    
+    // CRITICAL TEST REVERSED
+    timeline.push({
       timeline: [
         {
-          timeline: [combined2_test_images],
+          timeline: [createImageTrial('incompatible', 'Manmohan/Positive', 'Modi/Negative', 'Man/Pos', 'Modi/Neg', true)],
           timeline_variables: [
             ...modi_images.map(img => ({stimulus: img, stim_key_association: 'right'})),
-            ...previous_pm_images.map(img => ({stimulus: img, stim_key_association: 'left'}))
+            ...manmohan_images.map(img => ({stimulus: img, stim_key_association: 'left'}))
           ],
           randomize_order: true,
           repetitions: 2
         },
         {
-          timeline: [combined2_test_words],
+          timeline: [createWordTrial('incompatible', 'Manmohan/Positive', 'Modi/Negative', 'Man/Pos', 'Modi/Neg', true)],
           timeline_variables: [
             ...positive_words.map(word => ({stimulus: word, stim_key_association: 'left'})),
             ...negative_words.map(word => ({stimulus: word, stim_key_association: 'right'}))
@@ -967,61 +810,39 @@
         }
       ],
       randomize_order: true
-    };
-    timeline.push(combined2_test_procedure);
+    });
 
     // Debrief
-    if (isMobile) {
-      const debrief = {
-        type: jsPsychHtmlButtonResponse,
-        stimulus: `
-          <div style="font-size: 18px; max-width: 800px; margin: auto; padding: 20px 10px 120px 10px;">
-            <h1>Thank You for Participating!</h1>
-            
-            <p>The experiment is complete.</p>
-            
-            <h3>About This Study:</h3>
-            <p>This was an Implicit Association Test (IAT) measuring automatic associations 
-            between Prime Ministers and positive/negative words.</p>
-            
-            <p>The IAT measures the strength of associations between concepts 
-            (like "Modi" and "Previous PMs") and evaluations (like "Positive" and "Negative").</p>
-            
-            <p><strong>Your data will be displayed on the next screen.</strong></p>
-            
-            <p>Tap VIEW RESULTS to see your data.</p>
+    timeline.push({
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus: `
+        <div style="max-width: 800px; margin: 20px auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+          <h1 style="color: #2c3e50;">🎉 Thank You!</h1>
+          
+          <p style="font-size: 18px;">The experiment is complete.</p>
+          
+          <div style="background: #e8f4f8; padding: 20px; border-radius: 10px; margin: 20px 0;">
+            <h3 style="color: #2c3e50; margin-top: 0;">About This Study:</h3>
+            <p style="font-size: 16px;">This was an IAT measuring automatic associations 
+            between Narendra Modi and Dr Manmohan Singh with positive/negative words.</p>
           </div>
-        `,
-        choices: ['VIEW RESULTS'],
-        button_html: '<button class="jspsych-btn" style="font-size: 22px; padding: 20px 40px; background: #007bff; color: white; border: 3px solid #000; border-radius: 10px; font-weight: bold;">%choice%</button>'
-      };
-      timeline.push(debrief);
-    } else {
-      const debrief = {
-        type: jsPsychHtmlKeyboardResponse,
-        stimulus: `
-          <div style="font-size: 20px; max-width: 800px; margin: auto;">
-            <h1>Thank You for Participating!</h1>
-            
-            <p>The experiment is complete.</p>
-            
-            <h3>About This Study:</h3>
-            <p>This was an Implicit Association Test (IAT) measuring automatic associations 
-            between Prime Ministers and positive/negative words.</p>
-            
-            <p>The IAT measures the strength of associations between concepts 
-            (like "Modi" and "Previous PMs") and evaluations (like "Positive" and "Negative").</p>
-            
-            <p><strong>Your data will be displayed on the next screen.</strong></p>
-            
-            <p>Press any key to see your results.</p>
-          </div>
-        `
-      };
-      timeline.push(debrief);
-    }
+          
+          <p style="font-size: 18px; font-weight: bold;">Your data will be displayed on the next screen.</p>
+          
+          <p style="font-size: 16px; margin-top: 25px;">${isMobile ? '👆 Tap CONTINUE' : '⌨️ Press any key'}</p>
+        </div>
+      `,
+      on_load: function() {
+        if (isMobile) {
+          createTouchButtons({type: 'continue', label: 'VIEW RESULTS'});
+        }
+      },
+      on_finish: function() {
+        removeTouchButtons();
+      }
+    });
 
-    // Run the experiment
+    // Run
     jsPsych.run(timeline);
   </script>
 </html>

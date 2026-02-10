@@ -2,44 +2,613 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>IAT Experiment</title>
+    <title>Prime Minister Popularity IAT</title>
 
     <!-- jsPsych core -->
-    <script src="https://unpkg.com/jspsych@7.3.0"></script>
-
+    <script src="https://unpkg.com/jspsych@7.3.4"></script>
+    
     <!-- jsPsych plugins -->
-    <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.1.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-image-keyboard-response@1.1.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-instructions@1.1.4"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-iat-image@1.1.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-iat-html@1.1.3"></script>
 
-    <link href="https://unpkg.com/jspsych@7.3.0/css/jspsych.css" rel="stylesheet" />
+    <!-- jsPsych stylesheet -->
+    <link href="https://unpkg.com/jspsych@7.3.4/css/jspsych.css" rel="stylesheet" />
+    
+    <style>
+      body {
+        margin: 20px;
+        background-color: #f5f5f5;
+      }
+      .instructions-text {
+        font-size: 20px;
+        max-width: 900px;
+        margin: auto;
+        text-align: left;
+        line-height: 1.6;
+      }
+      .category-label {
+        padding: 15px;
+        margin: 10px;
+        background-color: #e0e0e0;
+        border-radius: 8px;
+        font-weight: bold;
+      }
+    </style>
   </head>
 
   <body></body>
 
   <script>
+    // Initialize jsPsych
     const jsPsych = initJsPsych({
       on_finish: function() {
-        jsPsych.data.displayData();
+        // Display data as CSV
+        jsPsych.data.displayData('csv');
       }
     });
 
+    // Create timeline
     const timeline = [];
 
+    // Welcome screen
     const welcome = {
       type: jsPsychHtmlKeyboardResponse,
-      stimulus: "<h2>Welcome to the experiment</h2><p>Press any key to begin.</p>"
+      stimulus: `
+        <div style="font-size: 24px; max-width: 800px; margin: auto; text-align: center;">
+          <h1>Prime Minister Popularity IAT</h1>
+          <p>Welcome to this research study on implicit attitudes.</p>
+          <p>In this task, you will categorize photos of Prime Ministers and words.</p>
+          <p>The task takes approximately 5-7 minutes.</p>
+          <br>
+          <p><strong>Press any key to continue.</strong></p>
+        </div>
+      `
     };
-
     timeline.push(welcome);
 
-    const trial = {
+    // Instructions
+    const instructions = {
       type: jsPsychHtmlKeyboardResponse,
-      stimulus: "<p>Press F for GOOD<br>Press J for BAD</p>",
-      choices: ['f', 'j'],
-      trial_duration: 3000
+      stimulus: `
+        <div class="instructions-text">
+          <h2>Instructions</h2>
+          
+          <p>In this experiment, you will be shown:</p>
+          <ul>
+            <li>Photos of <strong>Narendra Modi</strong></li>
+            <li>Photos of <strong>Previous Prime Ministers</strong></li>
+            <li><strong>Positive</strong> words (e.g., "wonderful", "happy")</li>
+            <li><strong>Negative</strong> words (e.g., "terrible", "awful")</li>
+          </ul>
+
+          <div style="margin: 30px 0; padding: 25px; background-color: #fff3cd; border-radius: 10px; border: 2px solid #ffc107;">
+            <h3>Your Task:</h3>
+            <p>Use the <strong>E</strong> and <strong>I</strong> keys to categorize items as quickly and accurately as possible.</p>
+            <p>The categories that share a response key will appear at the top of the screen.</p>
+          </div>
+
+          <p><strong>If you make an error:</strong> A red X will appear. Simply press the other key to continue.</p>
+          
+          <p><strong>Important:</strong> Respond as quickly as you can while making as few errors as possible.</p>
+          
+          <br>
+          <p style="text-align: center;"><strong>Press SPACEBAR when ready to begin.</strong></p>
+        </div>
+      `,
+      choices: [' ']
+    };
+    timeline.push(instructions);
+
+    // Define image stimuli (UPDATE THESE PATHS TO MATCH YOUR UPLOADED IMAGES)
+    const modi_images = [
+      'images/modi1.jpg',
+      'images/modi2.jpg',
+      'images/modi3.jpg',
+      'images/modi4.jpg'
+    ];
+
+    const previous_pm_images = [
+      'images/previous1.jpg',
+      'images/previous2.jpg',
+      'images/previous3.jpg',
+      'images/previous4.jpg'
+    ];
+
+    // Define word stimuli
+    const positive_words = [
+      'Wonderful', 'Happy', 'Joy', 'Love', 'Peace', 
+      'Pleasure', 'Glorious', 'Laughter', 'Success', 'Hope'
+    ];
+
+    const negative_words = [
+      'Terrible', 'Awful', 'Horrible', 'Evil', 'Nasty', 
+      'Failure', 'Agony', 'Pain', 'Disaster', 'Tragedy'
+    ];
+
+    // Block 1: Practice categorizing PMs (Modi vs Previous)
+    const pm_practice_instructions = {
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus: `
+        <div class="instructions-text" style="text-align: center;">
+          <h2>Practice: Categorize Prime Ministers</h2>
+          <br>
+          <div style="display: flex; justify-content: space-around; max-width: 600px; margin: 30px auto;">
+            <div class="category-label">
+              <p>Press <strong>E</strong> for:</p>
+              <h3>Narendra Modi</h3>
+            </div>
+            <div class="category-label">
+              <p>Press <strong>I</strong> for:</p>
+              <h3>Previous PMs</h3>
+            </div>
+          </div>
+          <br>
+          <p><strong>Press SPACEBAR to start.</strong></p>
+        </div>
+      `,
+      choices: [' ']
+    };
+    timeline.push(pm_practice_instructions);
+
+    const pm_practice = {
+      type: jsPsychIatImage,
+      stimulus: jsPsych.timelineVariable('stimulus'),
+      stim_key_association: jsPsych.timelineVariable('stim_key_association'),
+      html_when_wrong: '<span style="color: red; font-size: 80px; font-weight: bold;">X</span>',
+      bottom_instructions: '<p>Press E for <strong>Modi</strong> | Press I for <strong>Previous PMs</strong></p>',
+      force_correct_key_press: true,
+      display_feedback: true,
+      trial_duration: 3000,
+      left_category_key: 'e',
+      right_category_key: 'i',
+      left_category_label: ['Narendra Modi'],
+      right_category_label: ['Previous PMs'],
+      response_ends_trial: true,
+      stimulus_width: 400
     };
 
-    timeline.push(trial);
+    const pm_practice_procedure = {
+      timeline: [pm_practice],
+      timeline_variables: [
+        ...modi_images.map(img => ({stimulus: img, stim_key_association: 'left'})),
+        ...previous_pm_images.map(img => ({stimulus: img, stim_key_association: 'right'}))
+      ],
+      randomize_order: true,
+      repetitions: 2
+    };
+    timeline.push(pm_practice_procedure);
 
+    // Block 2: Practice categorizing words (Positive vs Negative)
+    const word_practice_instructions = {
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus: `
+        <div class="instructions-text" style="text-align: center;">
+          <h2>Practice: Categorize Words</h2>
+          <br>
+          <div style="display: flex; justify-content: space-around; max-width: 600px; margin: 30px auto;">
+            <div class="category-label">
+              <p>Press <strong>E</strong> for:</p>
+              <h3>Positive</h3>
+            </div>
+            <div class="category-label">
+              <p>Press <strong>I</strong> for:</p>
+              <h3>Negative</h3>
+            </div>
+          </div>
+          <br>
+          <p><strong>Press SPACEBAR to start.</strong></p>
+        </div>
+      `,
+      choices: [' ']
+    };
+    timeline.push(word_practice_instructions);
+
+    const word_practice = {
+      type: jsPsychIatHtml,
+      stimulus: jsPsych.timelineVariable('stimulus'),
+      stim_key_association: jsPsych.timelineVariable('stim_key_association'),
+      html_when_wrong: '<span style="color: red; font-size: 80px; font-weight: bold;">X</span>',
+      bottom_instructions: '<p>Press E for <strong>Positive</strong> | Press I for <strong>Negative</strong></p>',
+      force_correct_key_press: true,
+      display_feedback: true,
+      trial_duration: 3000,
+      left_category_key: 'e',
+      right_category_key: 'i',
+      left_category_label: ['Positive'],
+      right_category_label: ['Negative'],
+      response_ends_trial: true
+    };
+
+    const word_practice_procedure = {
+      timeline: [word_practice],
+      timeline_variables: [
+        ...positive_words.map(word => ({stimulus: word, stim_key_association: 'left'})),
+        ...negative_words.map(word => ({stimulus: word, stim_key_association: 'right'}))
+      ],
+      randomize_order: true,
+      repetitions: 1
+    };
+    timeline.push(word_practice_procedure);
+
+    // Block 3: Combined practice (Modi + Positive vs Previous + Negative)
+    const combined1_instructions = {
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus: `
+        <div class="instructions-text" style="text-align: center;">
+          <h2>Combined Task</h2>
+          <p>Now combine both tasks. Use the same keys for both photos and words.</p>
+          <br>
+          <div style="display: flex; justify-content: space-around; max-width: 700px; margin: 30px auto;">
+            <div class="category-label" style="background-color: #d4edda;">
+              <p>Press <strong>E</strong> for:</p>
+              <h3>Narendra Modi</h3>
+              <h3>OR</h3>
+              <h3>Positive</h3>
+            </div>
+            <div class="category-label" style="background-color: #f8d7da;">
+              <p>Press <strong>I</strong> for:</p>
+              <h3>Previous PMs</h3>
+              <h3>OR</h3>
+              <h3>Negative</h3>
+            </div>
+          </div>
+          <br>
+          <p><strong>Press SPACEBAR to start.</strong></p>
+        </div>
+      `,
+      choices: [' ']
+    };
+    timeline.push(combined1_instructions);
+
+    // Combined practice trials (images)
+    const combined1_practice_images = {
+      type: jsPsychIatImage,
+      stimulus: jsPsych.timelineVariable('stimulus'),
+      stim_key_association: jsPsych.timelineVariable('stim_key_association'),
+      html_when_wrong: '<span style="color: red; font-size: 80px; font-weight: bold;">X</span>',
+      bottom_instructions: '<p>E = <strong>Modi or Positive</strong> | I = <strong>Previous PMs or Negative</strong></p>',
+      force_correct_key_press: true,
+      display_feedback: true,
+      trial_duration: 3000,
+      left_category_key: 'e',
+      right_category_key: 'i',
+      left_category_label: ['Modi', 'Positive'],
+      right_category_label: ['Previous PMs', 'Negative'],
+      response_ends_trial: true,
+      stimulus_width: 400
+    };
+
+    // Combined practice trials (words)
+    const combined1_practice_words = {
+      type: jsPsychIatHtml,
+      stimulus: jsPsych.timelineVariable('stimulus'),
+      stim_key_association: jsPsych.timelineVariable('stim_key_association'),
+      html_when_wrong: '<span style="color: red; font-size: 80px; font-weight: bold;">X</span>',
+      bottom_instructions: '<p>E = <strong>Modi or Positive</strong> | I = <strong>Previous PMs or Negative</strong></p>',
+      force_correct_key_press: true,
+      display_feedback: true,
+      trial_duration: 3000,
+      left_category_key: 'e',
+      right_category_key: 'i',
+      left_category_label: ['Modi', 'Positive'],
+      right_category_label: ['Previous PMs', 'Negative'],
+      response_ends_trial: true
+    };
+
+    const combined1_practice_procedure = {
+      timeline: [
+        {
+          timeline: [combined1_practice_images],
+          timeline_variables: [
+            ...modi_images.map(img => ({stimulus: img, stim_key_association: 'left'})),
+            ...previous_pm_images.map(img => ({stimulus: img, stim_key_association: 'right'}))
+          ],
+          randomize_order: true
+        },
+        {
+          timeline: [combined1_practice_words],
+          timeline_variables: [
+            ...positive_words.map(word => ({stimulus: word, stim_key_association: 'left'})),
+            ...negative_words.map(word => ({stimulus: word, stim_key_association: 'right'}))
+          ],
+          randomize_order: true
+        }
+      ],
+      randomize_order: true,
+      repetitions: 1
+    };
+    timeline.push(combined1_practice_procedure);
+
+    // Block 4: Combined TEST (Modi + Positive vs Previous + Negative)
+    const combined1_test_images = {
+      type: jsPsychIatImage,
+      stimulus: jsPsych.timelineVariable('stimulus'),
+      stim_key_association: jsPsych.timelineVariable('stim_key_association'),
+      html_when_wrong: '<span style="color: red; font-size: 80px; font-weight: bold;">X</span>',
+      bottom_instructions: '<p>E = <strong>Modi or Positive</strong> | I = <strong>Previous PMs or Negative</strong></p>',
+      force_correct_key_press: true,
+      display_feedback: true,
+      trial_duration: 3000,
+      left_category_key: 'e',
+      right_category_key: 'i',
+      left_category_label: ['Modi', 'Positive'],
+      right_category_label: ['Previous PMs', 'Negative'],
+      response_ends_trial: true,
+      stimulus_width: 400,
+      data: {block: 'compatible', item_type: 'image'}
+    };
+
+    const combined1_test_words = {
+      type: jsPsychIatHtml,
+      stimulus: jsPsych.timelineVariable('stimulus'),
+      stim_key_association: jsPsych.timelineVariable('stim_key_association'),
+      html_when_wrong: '<span style="color: red; font-size: 80px; font-weight: bold;">X</span>',
+      bottom_instructions: '<p>E = <strong>Modi or Positive</strong> | I = <strong>Previous PMs or Negative</strong></p>',
+      force_correct_key_press: true,
+      display_feedback: true,
+      trial_duration: 3000,
+      left_category_key: 'e',
+      right_category_key: 'i',
+      left_category_label: ['Modi', 'Positive'],
+      right_category_label: ['Previous PMs', 'Negative'],
+      response_ends_trial: true,
+      data: {block: 'compatible', item_type: 'word'}
+    };
+
+    const combined1_test_procedure = {
+      timeline: [
+        {
+          timeline: [combined1_test_images],
+          timeline_variables: [
+            ...modi_images.map(img => ({stimulus: img, stim_key_association: 'left'})),
+            ...previous_pm_images.map(img => ({stimulus: img, stim_key_association: 'right'}))
+          ],
+          randomize_order: true,
+          repetitions: 2
+        },
+        {
+          timeline: [combined1_test_words],
+          timeline_variables: [
+            ...positive_words.map(word => ({stimulus: word, stim_key_association: 'left'})),
+            ...negative_words.map(word => ({stimulus: word, stim_key_association: 'right'}))
+          ],
+          randomize_order: true,
+          repetitions: 2
+        }
+      ],
+      randomize_order: true
+    };
+    timeline.push(combined1_test_procedure);
+
+    // Block 5: Reversed PM categorization
+    const pm_reversed_instructions = {
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus: `
+        <div class="instructions-text" style="text-align: center;">
+          <h2 style="color: #d9534f;">ATTENTION: Categories Reversed!</h2>
+          <p style="font-size: 22px;">The categories have switched sides.</p>
+          <br>
+          <div style="display: flex; justify-content: space-around; max-width: 600px; margin: 30px auto;">
+            <div class="category-label" style="background-color: #fff3cd; border: 3px solid #ffc107;">
+              <p>Press <strong>E</strong> for:</p>
+              <h3>Previous PMs</h3>
+            </div>
+            <div class="category-label" style="background-color: #fff3cd; border: 3px solid #ffc107;">
+              <p>Press <strong>I</strong> for:</p>
+              <h3>Narendra Modi</h3>
+            </div>
+          </div>
+          <br>
+          <p><strong>Press SPACEBAR to start.</strong></p>
+        </div>
+      `,
+      choices: [' ']
+    };
+    timeline.push(pm_reversed_instructions);
+
+    const pm_reversed_practice = {
+      type: jsPsychIatImage,
+      stimulus: jsPsych.timelineVariable('stimulus'),
+      stim_key_association: jsPsych.timelineVariable('stim_key_association'),
+      html_when_wrong: '<span style="color: red; font-size: 80px; font-weight: bold;">X</span>',
+      bottom_instructions: '<p>Press E for <strong>Previous PMs</strong> | Press I for <strong>Modi</strong></p>',
+      force_correct_key_press: true,
+      display_feedback: true,
+      trial_duration: 3000,
+      left_category_key: 'e',
+      right_category_key: 'i',
+      left_category_label: ['Previous PMs'],
+      right_category_label: ['Narendra Modi'],
+      response_ends_trial: true,
+      stimulus_width: 400
+    };
+
+    const pm_reversed_practice_procedure = {
+      timeline: [pm_reversed_practice],
+      timeline_variables: [
+        ...modi_images.map(img => ({stimulus: img, stim_key_association: 'right'})),
+        ...previous_pm_images.map(img => ({stimulus: img, stim_key_association: 'left'}))
+      ],
+      randomize_order: true,
+      repetitions: 2
+    };
+    timeline.push(pm_reversed_practice_procedure);
+
+    // Block 6: Combined practice REVERSED (Previous + Positive vs Modi + Negative)
+    const combined2_instructions = {
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus: `
+        <div class="instructions-text" style="text-align: center;">
+          <h2>Combined Task - Reversed</h2>
+          <br>
+          <div style="display: flex; justify-content: space-around; max-width: 700px; margin: 30px auto;">
+            <div class="category-label" style="background-color: #d4edda;">
+              <p>Press <strong>E</strong> for:</p>
+              <h3>Previous PMs</h3>
+              <h3>OR</h3>
+              <h3>Positive</h3>
+            </div>
+            <div class="category-label" style="background-color: #f8d7da;">
+              <p>Press <strong>I</strong> for:</p>
+              <h3>Narendra Modi</h3>
+              <h3>OR</h3>
+              <h3>Negative</h3>
+            </div>
+          </div>
+          <br>
+          <p><strong>Press SPACEBAR to start.</strong></p>
+        </div>
+      `,
+      choices: [' ']
+    };
+    timeline.push(combined2_instructions);
+
+    const combined2_practice_images = {
+      type: jsPsychIatImage,
+      stimulus: jsPsych.timelineVariable('stimulus'),
+      stim_key_association: jsPsych.timelineVariable('stim_key_association'),
+      html_when_wrong: '<span style="color: red; font-size: 80px; font-weight: bold;">X</span>',
+      bottom_instructions: '<p>E = <strong>Previous PMs or Positive</strong> | I = <strong>Modi or Negative</strong></p>',
+      force_correct_key_press: true,
+      display_feedback: true,
+      trial_duration: 3000,
+      left_category_key: 'e',
+      right_category_key: 'i',
+      left_category_label: ['Previous PMs', 'Positive'],
+      right_category_label: ['Modi', 'Negative'],
+      response_ends_trial: true,
+      stimulus_width: 400
+    };
+
+    const combined2_practice_words = {
+      type: jsPsychIatHtml,
+      stimulus: jsPsych.timelineVariable('stimulus'),
+      stim_key_association: jsPsych.timelineVariable('stim_key_association'),
+      html_when_wrong: '<span style="color: red; font-size: 80px; font-weight: bold;">X</span>',
+      bottom_instructions: '<p>E = <strong>Previous PMs or Positive</strong> | I = <strong>Modi or Negative</strong></p>',
+      force_correct_key_press: true,
+      display_feedback: true,
+      trial_duration: 3000,
+      left_category_key: 'e',
+      right_category_key: 'i',
+      left_category_label: ['Previous PMs', 'Positive'],
+      right_category_label: ['Modi', 'Negative'],
+      response_ends_trial: true
+    };
+
+    const combined2_practice_procedure = {
+      timeline: [
+        {
+          timeline: [combined2_practice_images],
+          timeline_variables: [
+            ...modi_images.map(img => ({stimulus: img, stim_key_association: 'right'})),
+            ...previous_pm_images.map(img => ({stimulus: img, stim_key_association: 'left'}))
+          ],
+          randomize_order: true
+        },
+        {
+          timeline: [combined2_practice_words],
+          timeline_variables: [
+            ...positive_words.map(word => ({stimulus: word, stim_key_association: 'left'})),
+            ...negative_words.map(word => ({stimulus: word, stim_key_association: 'right'}))
+          ],
+          randomize_order: true
+        }
+      ],
+      randomize_order: true,
+      repetitions: 1
+    };
+    timeline.push(combined2_practice_procedure);
+
+    // Block 7: Combined TEST REVERSED (Previous + Positive vs Modi + Negative)
+    const combined2_test_images = {
+      type: jsPsychIatImage,
+      stimulus: jsPsych.timelineVariable('stimulus'),
+      stim_key_association: jsPsych.timelineVariable('stim_key_association'),
+      html_when_wrong: '<span style="color: red; font-size: 80px; font-weight: bold;">X</span>',
+      bottom_instructions: '<p>E = <strong>Previous PMs or Positive</strong> | I = <strong>Modi or Negative</strong></p>',
+      force_correct_key_press: true,
+      display_feedback: true,
+      trial_duration: 3000,
+      left_category_key: 'e',
+      right_category_key: 'i',
+      left_category_label: ['Previous PMs', 'Positive'],
+      right_category_label: ['Modi', 'Negative'],
+      response_ends_trial: true,
+      stimulus_width: 400,
+      data: {block: 'incompatible', item_type: 'image'}
+    };
+
+    const combined2_test_words = {
+      type: jsPsychIatHtml,
+      stimulus: jsPsych.timelineVariable('stimulus'),
+      stim_key_association: jsPsych.timelineVariable('stim_key_association'),
+      html_when_wrong: '<span style="color: red; font-size: 80px; font-weight: bold;">X</span>',
+      bottom_instructions: '<p>E = <strong>Previous PMs or Positive</strong> | I = <strong>Modi or Negative</strong></p>',
+      force_correct_key_press: true,
+      display_feedback: true,
+      trial_duration: 3000,
+      left_category_key: 'e',
+      right_category_key: 'i',
+      left_category_label: ['Previous PMs', 'Positive'],
+      right_category_label: ['Modi', 'Negative'],
+      response_ends_trial: true,
+      data: {block: 'incompatible', item_type: 'word'}
+    };
+
+    const combined2_test_procedure = {
+      timeline: [
+        {
+          timeline: [combined2_test_images],
+          timeline_variables: [
+            ...modi_images.map(img => ({stimulus: img, stim_key_association: 'right'})),
+            ...previous_pm_images.map(img => ({stimulus: img, stim_key_association: 'left'}))
+          ],
+          randomize_order: true,
+          repetitions: 2
+        },
+        {
+          timeline: [combined2_test_words],
+          timeline_variables: [
+            ...positive_words.map(word => ({stimulus: word, stim_key_association: 'left'})),
+            ...negative_words.map(word => ({stimulus: word, stim_key_association: 'right'}))
+          ],
+          randomize_order: true,
+          repetitions: 2
+        }
+      ],
+      randomize_order: true
+    };
+    timeline.push(combined2_test_procedure);
+
+    // Thank you / Debrief
+    const debrief = {
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus: `
+        <div style="font-size: 20px; max-width: 800px; margin: auto;">
+          <h1>Thank You for Participating!</h1>
+          
+          <p>The experiment is complete.</p>
+          
+          <h3>About This Study:</h3>
+          <p>This was an Implicit Association Test (IAT) measuring automatic associations 
+          between Prime Ministers and positive/negative words.</p>
+          
+          <p>The IAT measures the strength of associations between concepts 
+          (like "Modi" and "Previous PMs") and evaluations (like "Positive" and "Negative").</p>
+          
+          <p><strong>Your data will be displayed on the next screen.</strong></p>
+          
+          <p>Press any key to see your results.</p>
+        </div>
+      `
+    };
+    timeline.push(debrief);
+
+    // Run the experiment
     jsPsych.run(timeline);
   </script>
 </html>

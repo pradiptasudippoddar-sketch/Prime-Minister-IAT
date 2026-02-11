@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="mobile-web-app-capable" content="yes">
   <title>IAT Study</title>
 
   <!-- jsPsych -->
@@ -31,93 +30,132 @@
     html, body {
       width: 100%;
       height: 100%;
-      background: #f0f0f0;
+      background: #1a1a2e;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-      overflow-x: hidden;
+      overflow: hidden;
       position: fixed;
     }
     
-    body {
-      padding-bottom: 140px;
-      padding-bottom: calc(140px + env(safe-area-inset-bottom));
-      overflow-y: auto;
+    /* FORCE LANDSCAPE */
+    @media screen and (orientation: portrait) {
+      body::before {
+        content: "↻";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #1a1a2e;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 80px;
+        z-index: 999999;
+        flex-direction: column;
+      }
+      
+      body::after {
+        content: "Please rotate your device to landscape mode";
+        position: fixed;
+        top: 60%;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        color: white;
+        font-size: 18px;
+        z-index: 999999;
+      }
+      
+      #experiment, #controls {
+        display: none !important;
+      }
+    }
+    
+    @media screen and (orientation: landscape) {
+      body {
+        padding-bottom: 25vh;
+      }
     }
     
     .container {
-      max-width: 600px;
-      margin: 20px auto;
-      padding: 15px;
+      max-width: 90vw;
+      margin: 0 auto;
+      padding: 3vh 4vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     
     .box {
       background: white;
-      border-radius: 10px;
-      padding: 25px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      margin-bottom: 15px;
+      border-radius: 12px;
+      padding: 3vh 4vw;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      width: 100%;
+      max-width: 900px;
     }
     
     h1 {
-      font-size: 24px;
-      margin-bottom: 12px;
+      font-size: 3.5vh;
+      margin-bottom: 2vh;
       color: #222;
     }
     
     p {
-      font-size: 16px;
-      line-height: 1.5;
+      font-size: 2vh;
+      line-height: 1.4;
       color: #555;
-      margin-bottom: 10px;
+      margin-bottom: 1.5vh;
     }
     
     .cats {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin: 20px 0;
+      gap: 2vw;
+      margin: 2vh 0;
     }
     
     .cat {
       background: #2c3e50;
       color: white;
-      padding: 18px;
+      padding: 2vh 2vw;
       border-radius: 8px;
       text-align: center;
       font-weight: 600;
-      font-size: 15px;
+      font-size: 2.5vh;
     }
     
     .warning {
       background: #fff3cd;
       border-left: 4px solid #ffc107;
-      padding: 12px;
-      margin: 15px 0;
+      padding: 2vh;
+      margin: 2vh 0;
       border-radius: 4px;
-      font-size: 14px;
+      font-size: 2vh;
     }
     
     .success {
       background: #d4edda;
       border-left: 4px solid #28a745;
-      padding: 12px;
-      margin: 15px 0;
+      padding: 2vh;
+      margin: 2vh 0;
       border-radius: 4px;
-      font-size: 14px;
+      font-size: 2vh;
     }
     
     .btn {
       width: 100%;
-      padding: 14px;
+      padding: 2vh;
       background: #2c3e50;
       color: white;
       border: none;
       border-radius: 8px;
-      font-size: 16px;
+      font-size: 2.5vh;
       font-weight: 600;
       cursor: pointer;
-      margin: 8px 0;
-      -webkit-user-select: none;
-      user-select: none;
+      margin: 1vh 0;
     }
     
     .btn:active {
@@ -125,179 +163,142 @@
       transform: scale(0.98);
     }
     
-    /* MOBILE TOUCH BUTTONS */
-    #touch-pad {
+    /* MOBILE CONTROLS */
+    #controls {
       position: fixed;
       bottom: 0;
       left: 0;
       right: 0;
-      background: white;
-      border-top: 3px solid #ccc;
-      padding: 15px;
-      padding-bottom: calc(15px + env(safe-area-inset-bottom));
+      height: 25vh;
+      background: linear-gradient(to top, #16213e 0%, #1a1a2e 100%);
       display: none;
-      gap: 12px;
+      gap: 2vw;
+      padding: 2vh 3vw;
       z-index: 999999;
-      box-shadow: 0 -5px 20px rgba(0,0,0,0.15);
+      box-shadow: 0 -5px 30px rgba(0,0,0,0.5);
     }
     
-    #touch-pad.visible {
+    #controls.active {
       display: flex !important;
     }
     
-    .touch-key {
+    .control-btn {
       flex: 1;
-      background: #27ae60;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
       border: none;
-      border-radius: 12px;
-      padding: 25px 10px;
-      font-size: 20px;
-      font-weight: 700;
+      border-radius: 15px;
+      font-size: 4vh;
+      font-weight: 900;
       cursor: pointer;
       position: relative;
+      box-shadow: 0 8px 0 #5a3d8a, 0 10px 30px rgba(0,0,0,0.4);
       transition: all 0.1s;
-      box-shadow: 0 4px 0 #1e8449;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
     
-    .touch-key:active {
-      background: #229954;
-      transform: translateY(4px);
-      box-shadow: 0 0 0 #1e8449;
+    .control-btn:active {
+      transform: translateY(8px);
+      box-shadow: 0 0 0 #5a3d8a, 0 2px 10px rgba(0,0,0,0.4);
     }
     
-    .touch-key.pressed {
-      background: #229954;
-      transform: translateY(4px);
-      box-shadow: 0 0 0 #1e8449;
+    .control-btn.single {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      box-shadow: 0 8px 0 #c74658, 0 10px 30px rgba(0,0,0,0.4);
     }
     
-    .key-letter {
-      display: block;
-      font-size: 32px;
-      font-weight: 900;
-      margin-bottom: 5px;
+    .control-btn.single:active {
+      box-shadow: 0 0 0 #c74658, 0 2px 10px rgba(0,0,0,0.4);
+    }
+    
+    .key-text {
+      font-size: 6vh;
+      margin-bottom: 1vh;
     }
     
     .key-label {
-      display: block;
-      font-size: 11px;
+      font-size: 2vh;
       opacity: 0.9;
       text-transform: uppercase;
+      font-weight: 600;
     }
     
     /* TRIAL DISPLAY */
     .jspsych-iat-stim {
-      font-size: 44px !important;
+      font-size: 6vh !important;
       font-weight: 700 !important;
       color: #222 !important;
-      margin: 50px auto !important;
+      margin: 5vh auto !important;
       text-align: center !important;
-      padding: 0 20px !important;
+      padding: 0 3vw !important;
     }
     
     .jspsych-iat-stim img {
-      max-width: 75vw !important;
+      max-width: 50vw !important;
       max-height: 40vh !important;
       border-radius: 10px;
       display: block !important;
       margin: 0 auto !important;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     }
     
     .error-mark {
       color: #e74c3c !important;
-      font-size: 80px !important;
+      font-size: 10vh !important;
       font-weight: 900 !important;
     }
     
     .jspsych-iat-category {
       font-weight: 700 !important;
-      font-size: 14px !important;
-      padding: 10px 16px !important;
+      font-size: 2.5vh !important;
+      padding: 1.5vh 3vw !important;
       border: 3px solid #2c3e50 !important;
       border-radius: 8px !important;
-      margin: 8px !important;
+      margin: 1vh !important;
       background: white !important;
     }
     
     .jspsych-display-element > p {
-      font-size: 14px !important;
-      color: #777 !important;
-      margin-top: 30px !important;
-      padding: 0 20px 130px !important;
+      font-size: 2.5vh !important;
+      color: #fff !important;
+      background: rgba(0,0,0,0.7) !important;
+      margin-top: 3vh !important;
+      padding: 2vh 3vw 28vh !important;
       text-align: center !important;
       font-weight: 600 !important;
     }
     
     .result-item {
-      padding: 10px 0;
+      padding: 1.5vh 0;
       border-bottom: 1px solid #eee;
-      font-size: 15px;
+      font-size: 2vh;
     }
     
     .result-item:last-child {
       border-bottom: none;
-    }
-    
-    /* VISUAL FEEDBACK */
-    @keyframes flash {
-      0%, 100% { background: #27ae60; }
-      50% { background: #2ecc71; }
-    }
-    
-    .touch-key.flash {
-      animation: flash 0.3s ease;
-    }
-    
-    @media (max-width: 600px) {
-      .container {
-        padding: 12px;
-      }
-      
-      .box {
-        padding: 20px;
-      }
-      
-      h1 {
-        font-size: 20px;
-      }
-      
-      .jspsych-iat-stim {
-        font-size: 38px !important;
-        margin: 35px auto !important;
-      }
     }
   </style>
 </head>
 
 <body>
   <div id="experiment"></div>
-  <div id="touch-pad"></div>
+  <div id="controls"></div>
 </body>
 
 <script>
 // ===========================================
-// DETECT MOBILE - AGGRESSIVE CHECK
+// GLOBAL VARIABLES
 // ===========================================
-const IS_MOBILE = (function() {
-  const ua = navigator.userAgent.toLowerCase();
-  const isMobileUA = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(ua);
-  const isSmallScreen = window.innerWidth <= 768;
-  const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-  
-  return isMobileUA || isSmallScreen || isTouchDevice;
-})();
-
+const IS_MOBILE = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || window.innerWidth <= 768;
 const PID = 'P' + Date.now();
 let EXPERIMENT_DATA = null;
 
 console.log('=== IAT STARTED ===');
-console.log('Mobile Detected:', IS_MOBILE);
-console.log('User Agent:', navigator.userAgent);
-console.log('Screen Width:', window.innerWidth);
-console.log('Touch Points:', navigator.maxTouchPoints);
-console.log('Participant ID:', PID);
+console.log('Mobile:', IS_MOBILE);
+console.log('Participant:', PID);
 
 // ===========================================
 // STIMULI
@@ -308,186 +309,84 @@ const WORDS_POS = ['Wonderful', 'Happy', 'Joy', 'Love', 'Peace', 'Pleasure', 'Gl
 const WORDS_NEG = ['Terrible', 'Awful', 'Horrible', 'Evil', 'Nasty', 'Failure', 'Agony', 'Pain', 'Disaster', 'Tragedy'];
 
 // ===========================================
-// KEY SIMULATION - MULTIPLE METHODS
+// KEY PRESS FUNCTION - DIRECT METHOD
 // ===========================================
-function simulateKeyPress(key) {
-  console.log('📱 SIMULATING KEY:', key);
+window.doKeyPress = function(key) {
+  console.log('🔑 KEY PRESSED:', key);
   
-  const keyMap = {
-    'e': { key: 'e', code: 'KeyE', keyCode: 69, which: 69 },
-    'i': { key: 'i', code: 'KeyI', keyCode: 73, which: 73 },
-    ' ': { key: ' ', code: 'Space', keyCode: 32, which: 32 }
+  const codes = {
+    'e': {key: 'e', code: 'KeyE', keyCode: 69},
+    'i': {key: 'i', code: 'KeyI', keyCode: 73},
+    ' ': {key: ' ', code: 'Space', keyCode: 32}
   };
   
-  const info = keyMap[key];
+  const info = codes[key];
   
-  // METHOD 1: KeyboardEvent
-  const keydownEvent = new KeyboardEvent('keydown', {
+  // Create events
+  const down = new KeyboardEvent('keydown', {
     key: info.key,
     code: info.code,
     keyCode: info.keyCode,
-    which: info.which,
+    which: info.keyCode,
     bubbles: true,
-    cancelable: true,
-    view: window
+    cancelable: true
   });
   
-  const keyupEvent = new KeyboardEvent('keyup', {
+  const up = new KeyboardEvent('keyup', {
     key: info.key,
     code: info.code,
     keyCode: info.keyCode,
-    which: info.which,
+    which: info.keyCode,
     bubbles: true,
-    cancelable: true,
-    view: window
+    cancelable: true
   });
   
-  document.dispatchEvent(keydownEvent);
-  window.dispatchEvent(keydownEvent);
-  document.body.dispatchEvent(keydownEvent);
-  
-  setTimeout(() => {
-    document.dispatchEvent(keyupEvent);
-    window.dispatchEvent(keyupEvent);
-    document.body.dispatchEvent(keyupEvent);
-  }, 100);
-  
-  // METHOD 2: Try deprecated initKeyboardEvent for older browsers
-  try {
-    const oldDown = document.createEvent('KeyboardEvent');
-    if (oldDown.initKeyboardEvent) {
-      oldDown.initKeyboardEvent('keydown', true, true, window, info.key, 0, false, false, false, false);
-      document.dispatchEvent(oldDown);
-    }
-  } catch(e) {}
-  
-  // Visual feedback
-  flashButton(key);
-}
-
-function flashButton(key) {
-  const buttons = document.querySelectorAll('.touch-key');
-  buttons.forEach(btn => {
-    if (btn.dataset.key === key) {
-      btn.classList.add('flash', 'pressed');
-      setTimeout(() => {
-        btn.classList.remove('flash', 'pressed');
-      }, 200);
-    }
-  });
+  // Dispatch to all possible targets
+  document.dispatchEvent(down);
+  setTimeout(() => document.dispatchEvent(up), 50);
 }
 
 // ===========================================
-// MOBILE CONTROLS - COMPLETELY REWRITTEN
+// CONTROL SETUP
 // ===========================================
-function setupTouchControls(mode, labels) {
-  console.log('🎮 SETTING UP CONTROLS:', mode, labels);
+window.setupControls = function(mode, labels) {
+  console.log('🎮 SETUP CONTROLS:', mode, labels);
   
-  const pad = document.getElementById('touch-pad');
-  if (!pad || !IS_MOBILE) {
-    console.log('❌ No touch pad or not mobile');
-    return;
-  }
+  if (!IS_MOBILE) return;
   
-  pad.innerHTML = '';
-  pad.className = 'visible';
+  const ctrl = document.getElementById('controls');
+  ctrl.innerHTML = '';
+  ctrl.className = 'active';
   
   if (mode === 'single') {
-    // Single continue button
-    const btn = document.createElement('button');
-    btn.className = 'touch-key';
-    btn.dataset.key = ' ';
-    btn.innerHTML = `<span class="key-letter">TAP</span><span class="key-label">${labels}</span>`;
-    
-    // Multiple event listeners for maximum compatibility
-    btn.addEventListener('touchstart', function(e) {
-      e.preventDefault();
-      console.log('👆 TOUCHSTART');
-      simulateKeyPress(' ');
-    }, { passive: false });
-    
-    btn.addEventListener('click', function(e) {
-      e.preventDefault();
-      console.log('🖱️ CLICK');
-      simulateKeyPress(' ');
-    }, { passive: false });
-    
-    btn.addEventListener('mousedown', function(e) {
-      e.preventDefault();
-      console.log('🖱️ MOUSEDOWN');
-      simulateKeyPress(' ');
-    }, { passive: false });
-    
-    pad.appendChild(btn);
-    
-  } else if (mode === 'double') {
-    // E and I buttons
-    const btnE = document.createElement('button');
-    btnE.className = 'touch-key';
-    btnE.dataset.key = 'e';
-    btnE.innerHTML = `<span class="key-letter">E</span><span class="key-label">${labels.e}</span>`;
-    
-    const btnI = document.createElement('button');
-    btnI.className = 'touch-key';
-    btnI.dataset.key = 'i';
-    btnI.innerHTML = `<span class="key-letter">I</span><span class="key-label">${labels.i}</span>`;
-    
-    // E button events
-    btnE.addEventListener('touchstart', function(e) {
-      e.preventDefault();
-      console.log('👆 TOUCHSTART E');
-      simulateKeyPress('e');
-    }, { passive: false });
-    
-    btnE.addEventListener('click', function(e) {
-      e.preventDefault();
-      console.log('🖱️ CLICK E');
-      simulateKeyPress('e');
-    }, { passive: false });
-    
-    btnE.addEventListener('mousedown', function(e) {
-      e.preventDefault();
-      console.log('🖱️ MOUSEDOWN E');
-      simulateKeyPress('e');
-    }, { passive: false });
-    
-    // I button events
-    btnI.addEventListener('touchstart', function(e) {
-      e.preventDefault();
-      console.log('👆 TOUCHSTART I');
-      simulateKeyPress('i');
-    }, { passive: false });
-    
-    btnI.addEventListener('click', function(e) {
-      e.preventDefault();
-      console.log('🖱️ CLICK I');
-      simulateKeyPress('i');
-    }, { passive: false });
-    
-    btnI.addEventListener('mousedown', function(e) {
-      e.preventDefault();
-      console.log('🖱️ MOUSEDOWN I');
-      simulateKeyPress('i');
-    }, { passive: false });
-    
-    pad.appendChild(btnE);
-    pad.appendChild(btnI);
+    ctrl.innerHTML = `
+      <button class="control-btn single" onclick="doKeyPress(' ')">
+        <div class="key-text">TAP</div>
+        <div class="key-label">${labels}</div>
+      </button>
+    `;
+  } else {
+    ctrl.innerHTML = `
+      <button class="control-btn" onclick="doKeyPress('e')">
+        <div class="key-text">E</div>
+        <div class="key-label">${labels.e}</div>
+      </button>
+      <button class="control-btn" onclick="doKeyPress('i')">
+        <div class="key-text">I</div>
+        <div class="key-label">${labels.i}</div>
+      </button>
+    `;
   }
-  
-  console.log('✅ CONTROLS READY');
 }
 
-function hideTouchControls() {
-  console.log('🚫 HIDING CONTROLS');
-  const pad = document.getElementById('touch-pad');
-  if (pad) {
-    pad.className = '';
-    pad.innerHTML = '';
-  }
+window.hideControls = function() {
+  console.log('🚫 HIDE CONTROLS');
+  const ctrl = document.getElementById('controls');
+  if (ctrl) ctrl.className = '';
 }
 
 // ===========================================
-// FILE DOWNLOADS
+// DOWNLOAD FUNCTIONS
 // ===========================================
 window.downloadCSV = function() {
   if (!EXPERIMENT_DATA) {
@@ -496,7 +395,7 @@ window.downloadCSV = function() {
   }
   const blob = new Blob([EXPERIMENT_DATA.csv], {type: 'text/csv;charset=utf-8'});
   saveAs(blob, `IAT_${PID}.csv`);
-  alert('✅ CSV downloaded!\n\nSend this file to the researcher.');
+  alert('✅ CSV downloaded! Send this file to the researcher.');
 }
 
 window.downloadSummary = function() {
@@ -533,14 +432,14 @@ window.downloadBoth = function() {
 }
 
 // ===========================================
-// JSPSYCH INITIALIZATION
+// JSPSYCH
 // ===========================================
 const jsPsych = initJsPsych({
   display_element: 'experiment',
   
   on_finish: function() {
-    hideTouchControls();
-    console.log('📊 EXPERIMENT FINISHED - PROCESSING DATA');
+    hideControls();
+    console.log('📊 PROCESSING DATA');
     
     const allData = jsPsych.data.get();
     const iatData = allData.filter([
@@ -604,7 +503,7 @@ const jsPsych = initJsPsych({
       csv: csv
     };
     
-    console.log('✅ DATA READY:', EXPERIMENT_DATA);
+    console.log('✅ DATA READY');
     showResults();
   },
   
@@ -615,9 +514,6 @@ const jsPsych = initJsPsych({
   }
 });
 
-// ===========================================
-// RESULTS DISPLAY
-// ===========================================
 function showResults() {
   document.getElementById('experiment').innerHTML = `
     <div class="container">
@@ -629,18 +525,18 @@ function showResults() {
           <strong>Your data is ready to download.</strong>
         </div>
         
-        <div style="background: #f8f9fa; padding: 18px; border-radius: 8px; margin: 18px 0;">
+        <div style="background: #f8f9fa; padding: 2vh; border-radius: 8px; margin: 2vh 0;">
           <div class="result-item"><strong>ID:</strong> ${EXPERIMENT_DATA.id}</div>
           <div class="result-item"><strong>Date:</strong> ${EXPERIMENT_DATA.date}</div>
           <div class="result-item"><strong>Device:</strong> ${EXPERIMENT_DATA.device}</div>
           <div class="result-item"><strong>Trials:</strong> ${EXPERIMENT_DATA.trials}</div>
           <div class="result-item"><strong>Accuracy:</strong> ${EXPERIMENT_DATA.accuracy}</div>
           <div class="result-item"><strong>Avg RT:</strong> ${EXPERIMENT_DATA.rt}</div>
-          <div class="result-item" style="margin-top: 12px; padding-top: 12px; border-top: 2px solid #ddd;">
+          <div class="result-item" style="margin-top: 2vh; padding-top: 2vh; border-top: 2px solid #ddd;">
             <strong>D-Score:</strong> ${EXPERIMENT_DATA.dscore}
           </div>
           <div class="result-item"><strong>Result:</strong> ${EXPERIMENT_DATA.result}</div>
-          <div style="margin-top: 12px; padding: 12px; background: white; border-radius: 6px; font-size: 14px;">
+          <div style="margin-top: 2vh; padding: 2vh; background: white; border-radius: 6px;">
             ${EXPERIMENT_DATA.explanation}
           </div>
         </div>
@@ -671,7 +567,7 @@ timeline.push({
         <p><strong>Political Attitudes Study</strong></p>
         <p>Measures automatic associations between political figures and positive/negative words.</p>
         
-        <div style="margin: 18px 0; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+        <div style="margin: 2vh 0; padding: 2vh; background: #f8f9fa; border-radius: 8px;">
           <p><strong>You will see:</strong></p>
           <p>• Photos of Narendra Modi<br>
           • Photos of Dr. Manmohan Singh<br>
@@ -681,22 +577,21 @@ timeline.push({
         
         <div class="warning">
           <strong>Duration:</strong> 5-7 minutes<br>
-          <strong>Respond as fast as possible!</strong>
+          <strong>${IS_MOBILE ? 'Keep device in LANDSCAPE mode!' : 'Respond as fast as possible!'}</strong>
         </div>
         
-        <p style="text-align: center; font-weight: 700; margin-top: 25px; font-size: 18px;">
+        <p style="text-align: center; font-weight: 700; margin-top: 3vh; font-size: 3vh;">
           ${IS_MOBILE ? '👇 TAP CONTINUE BELOW 👇' : 'PRESS ANY KEY'}
         </p>
       </div>
     </div>
   `,
-  on_load: () => {
-    if (IS_MOBILE) {
-      console.log('📱 WELCOME SCREEN - SHOWING CONTROLS');
-      setupTouchControls('single', 'CONTINUE');
-    }
+  on_load: function() {
+    if (IS_MOBILE) setupControls('single', 'CONTINUE');
   },
-  on_finish: () => hideTouchControls()
+  on_finish: function() {
+    hideControls();
+  }
 });
 
 timeline.push({
@@ -708,28 +603,27 @@ timeline.push({
         <p>Use ${IS_MOBILE ? '<strong>the E and I buttons below</strong>' : '<strong>E and I keys</strong>'} to categorize items.</p>
         
         <div class="cats">
-          <div class="cat">E<br>Left</div>
-          <div class="cat">I<br>Right</div>
+          <div class="cat">E = Left</div>
+          <div class="cat">I = Right</div>
         </div>
         
         <div class="warning">
           <strong>If wrong:</strong> An ✕ appears. Press ${IS_MOBILE ? 'the other button' : 'the correct key'}.
         </div>
         
-        <p style="text-align: center; font-weight: 700; margin-top: 25px; font-size: 18px;">
+        <p style="text-align: center; font-weight: 700; margin-top: 3vh; font-size: 3vh;">
           ${IS_MOBILE ? '👇 TAP BEGIN BELOW 👇' : 'PRESS SPACE'}
         </p>
       </div>
     </div>
   `,
   choices: [' '],
-  on_load: () => {
-    if (IS_MOBILE) {
-      console.log('📱 INSTRUCTIONS - SHOWING CONTROLS');
-      setupTouchControls('single', 'BEGIN');
-    }
+  on_load: function() {
+    if (IS_MOBILE) setupControls('single', 'BEGIN');
   },
-  on_finish: () => hideTouchControls()
+  on_finish: function() {
+    hideControls();
+  }
 });
 
 function blockIntro(title, left, right, reversed) {
@@ -741,23 +635,22 @@ function blockIntro(title, left, right, reversed) {
           <h1>${title}</h1>
           ${reversed ? '<div class="warning"><strong>⚠️ SIDES SWITCHED!</strong></div>' : ''}
           <div class="cats">
-            <div class="cat">E<br>${left}</div>
-            <div class="cat">I<br>${right}</div>
+            <div class="cat">E = ${left}</div>
+            <div class="cat">I = ${right}</div>
           </div>
-          <p style="text-align: center; font-weight: 700; margin-top: 25px; font-size: 18px;">
-            ${IS_MOBILE ? '👇 TAP START BELOW 👇' : 'PRESS SPACE'}
+          <p style="text-align: center; font-weight: 700; margin-top: 3vh; font-size: 3vh;">
+            ${IS_MOBILE ? '👇 TAP START 👇' : 'PRESS SPACE'}
           </p>
         </div>
       </div>
     `,
     choices: [' '],
-    on_load: () => {
-      if (IS_MOBILE) {
-        console.log('📱 BLOCK INTRO - SHOWING CONTROLS');
-        setupTouchControls('single', 'START');
-      }
+    on_load: function() {
+      if (IS_MOBILE) setupControls('single', 'START');
     },
-    on_finish: () => hideTouchControls()
+    on_finish: function() {
+      hideControls();
+    }
   };
 }
 
@@ -777,11 +670,8 @@ function imgTrial(block, lCat, rCat, lShort, rShort, crit) {
     right_category_label: rCat.split('/'),
     response_ends_trial: true,
     data: {block: block, type: 'image', critical: crit || false},
-    on_load: () => {
-      if (IS_MOBILE) {
-        console.log('📱 IMAGE TRIAL - SHOWING CONTROLS');
-        setupTouchControls('double', {e: lShort, i: rShort});
-      }
+    on_load: function() {
+      if (IS_MOBILE) setupControls('double', {e: lShort, i: rShort});
     }
   };
 }
@@ -802,11 +692,8 @@ function wordTrial(block, lCat, rCat, lShort, rShort, crit) {
     right_category_label: rCat.split('/'),
     response_ends_trial: true,
     data: {block: block, type: 'word', critical: crit || false},
-    on_load: () => {
-      if (IS_MOBILE) {
-        console.log('📱 WORD TRIAL - SHOWING CONTROLS');
-        setupTouchControls('double', {e: lShort, i: rShort});
-      }
+    on_load: function() {
+      if (IS_MOBILE) setupControls('double', {e: lShort, i: rShort});
     }
   };
 }
@@ -957,22 +844,20 @@ timeline.push({
         <div class="success">
           The IAT measures automatic associations by comparing response times.
         </div>
-        <p style="text-align: center; font-weight: 700; margin-top: 25px; font-size: 18px;">
+        <p style="text-align: center; font-weight: 700; margin-top: 3vh; font-size: 3vh;">
           ${IS_MOBILE ? '👇 TAP FOR RESULTS 👇' : 'PRESS ANY KEY'}
         </p>
       </div>
     </div>
   `,
-  on_load: () => {
-    if (IS_MOBILE) {
-      console.log('📱 DEBRIEF - SHOWING CONTROLS');
-      setupTouchControls('single', 'VIEW RESULTS');
-    }
+  on_load: function() {
+    if (IS_MOBILE) setupControls('single', 'VIEW RESULTS');
   },
-  on_finish: () => hideTouchControls()
+  on_finish: function() {
+    hideControls();
+  }
 });
 
-// START
 console.log('🚀 STARTING EXPERIMENT');
 jsPsych.run(timeline);
 </script>

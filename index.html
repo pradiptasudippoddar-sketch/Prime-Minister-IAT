@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <title>IAT Study</title>
 
   <!-- jsPsych -->
@@ -12,7 +14,7 @@
   <script src="https://unpkg.com/@jspsych/plugin-iat-html@1.1.3"></script>
   <link href="https://unpkg.com/jspsych@7.3.4/css/jspsych.css" rel="stylesheet" />
   
-  <!-- FileSaver for reliable downloads -->
+  <!-- FileSaver -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
   
   <style>
@@ -20,37 +22,50 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: #f0f0f0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      overflow-x: hidden;
+      position: fixed;
     }
     
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-      background: #f0f0f0;
-      padding-bottom: 150px;
+      padding-bottom: 140px;
+      padding-bottom: calc(140px + env(safe-area-inset-bottom));
+      overflow-y: auto;
     }
     
     .container {
       max-width: 600px;
-      margin: 30px auto;
-      padding: 20px;
+      margin: 20px auto;
+      padding: 15px;
     }
     
     .box {
       background: white;
-      border-radius: 12px;
-      padding: 30px;
+      border-radius: 10px;
+      padding: 25px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      margin-bottom: 20px;
+      margin-bottom: 15px;
     }
     
     h1 {
       font-size: 24px;
-      margin-bottom: 15px;
+      margin-bottom: 12px;
       color: #222;
     }
     
     p {
       font-size: 16px;
-      line-height: 1.6;
+      line-height: 1.5;
       color: #555;
       margin-bottom: 10px;
     }
@@ -58,38 +73,41 @@
     .cats {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 15px;
+      gap: 12px;
       margin: 20px 0;
     }
     
     .cat {
       background: #2c3e50;
       color: white;
-      padding: 20px;
+      padding: 18px;
       border-radius: 8px;
       text-align: center;
       font-weight: 600;
+      font-size: 15px;
     }
     
     .warning {
       background: #fff3cd;
       border-left: 4px solid #ffc107;
-      padding: 15px;
-      margin: 20px 0;
+      padding: 12px;
+      margin: 15px 0;
       border-radius: 4px;
+      font-size: 14px;
     }
     
     .success {
       background: #d4edda;
       border-left: 4px solid #28a745;
-      padding: 15px;
-      margin: 20px 0;
+      padding: 12px;
+      margin: 15px 0;
       border-radius: 4px;
+      font-size: 14px;
     }
     
     .btn {
       width: 100%;
-      padding: 15px;
+      padding: 14px;
       background: #2c3e50;
       color: white;
       border: none;
@@ -97,15 +115,18 @@
       font-size: 16px;
       font-weight: 600;
       cursor: pointer;
-      margin: 10px 0;
+      margin: 8px 0;
+      -webkit-user-select: none;
+      user-select: none;
     }
     
     .btn:active {
       background: #34495e;
+      transform: scale(0.98);
     }
     
-    /* FIXED MOBILE BUTTONS */
-    .touch-btns {
+    /* MOBILE TOUCH BUTTONS */
+    #touch-pad {
       position: fixed;
       bottom: 0;
       left: 0;
@@ -113,39 +134,66 @@
       background: white;
       border-top: 3px solid #ccc;
       padding: 15px;
+      padding-bottom: calc(15px + env(safe-area-inset-bottom));
       display: none;
-      gap: 15px;
-      z-index: 99999;
-      box-shadow: 0 -5px 15px rgba(0,0,0,0.2);
+      gap: 12px;
+      z-index: 999999;
+      box-shadow: 0 -5px 20px rgba(0,0,0,0.15);
     }
     
-    .touch-btns.active {
+    #touch-pad.visible {
       display: flex !important;
     }
     
-    .touch-btn {
+    .touch-key {
       flex: 1;
-      background: #2c3e50;
+      background: #27ae60;
       color: white;
       border: none;
-      border-radius: 10px;
-      padding: 25px 15px;
-      font-size: 18px;
+      border-radius: 12px;
+      padding: 25px 10px;
+      font-size: 20px;
       font-weight: 700;
       cursor: pointer;
+      position: relative;
+      transition: all 0.1s;
+      box-shadow: 0 4px 0 #1e8449;
     }
     
-    .touch-btn:active {
-      background: #34495e;
-      transform: scale(0.95);
+    .touch-key:active {
+      background: #229954;
+      transform: translateY(4px);
+      box-shadow: 0 0 0 #1e8449;
     }
     
-    /* TRIAL STYLES */
+    .touch-key.pressed {
+      background: #229954;
+      transform: translateY(4px);
+      box-shadow: 0 0 0 #1e8449;
+    }
+    
+    .key-letter {
+      display: block;
+      font-size: 32px;
+      font-weight: 900;
+      margin-bottom: 5px;
+    }
+    
+    .key-label {
+      display: block;
+      font-size: 11px;
+      opacity: 0.9;
+      text-transform: uppercase;
+    }
+    
+    /* TRIAL DISPLAY */
     .jspsych-iat-stim {
       font-size: 44px !important;
-      font-weight: 600 !important;
+      font-weight: 700 !important;
+      color: #222 !important;
       margin: 50px auto !important;
       text-align: center !important;
+      padding: 0 20px !important;
     }
     
     .jspsych-iat-stim img {
@@ -154,42 +202,57 @@
       border-radius: 10px;
       display: block !important;
       margin: 0 auto !important;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     }
     
     .error-mark {
       color: #e74c3c !important;
-      font-size: 70px !important;
+      font-size: 80px !important;
+      font-weight: 900 !important;
     }
     
     .jspsych-iat-category {
-      font-weight: 600 !important;
+      font-weight: 700 !important;
       font-size: 14px !important;
-      padding: 12px 18px !important;
-      border: 2px solid #2c3e50 !important;
+      padding: 10px 16px !important;
+      border: 3px solid #2c3e50 !important;
       border-radius: 8px !important;
-      margin: 10px !important;
+      margin: 8px !important;
+      background: white !important;
     }
     
     .jspsych-display-element > p {
       font-size: 14px !important;
       color: #777 !important;
       margin-top: 30px !important;
-      padding: 0 20px 120px !important;
+      padding: 0 20px 130px !important;
       text-align: center !important;
+      font-weight: 600 !important;
     }
     
     .result-item {
       padding: 10px 0;
       border-bottom: 1px solid #eee;
+      font-size: 15px;
     }
     
     .result-item:last-child {
       border-bottom: none;
     }
     
+    /* VISUAL FEEDBACK */
+    @keyframes flash {
+      0%, 100% { background: #27ae60; }
+      50% { background: #2ecc71; }
+    }
+    
+    .touch-key.flash {
+      animation: flash 0.3s ease;
+    }
+    
     @media (max-width: 600px) {
       .container {
-        padding: 15px;
+        padding: 12px;
       }
       
       .box {
@@ -202,6 +265,7 @@
       
       .jspsych-iat-stim {
         font-size: 38px !important;
+        margin: 35px auto !important;
       }
     }
   </style>
@@ -209,20 +273,31 @@
 
 <body>
   <div id="experiment"></div>
-  <div class="touch-btns" id="controls"></div>
+  <div id="touch-pad"></div>
 </body>
 
 <script>
 // ===========================================
-// GLOBAL SETUP
+// DETECT MOBILE - AGGRESSIVE CHECK
 // ===========================================
-const IS_MOBILE = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || window.innerWidth <= 768;
+const IS_MOBILE = (function() {
+  const ua = navigator.userAgent.toLowerCase();
+  const isMobileUA = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(ua);
+  const isSmallScreen = window.innerWidth <= 768;
+  const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+  
+  return isMobileUA || isSmallScreen || isTouchDevice;
+})();
+
 const PID = 'P' + Date.now();
 let EXPERIMENT_DATA = null;
 
 console.log('=== IAT STARTED ===');
-console.log('Participant:', PID);
-console.log('Device:', IS_MOBILE ? 'MOBILE' : 'DESKTOP');
+console.log('Mobile Detected:', IS_MOBILE);
+console.log('User Agent:', navigator.userAgent);
+console.log('Screen Width:', window.innerWidth);
+console.log('Touch Points:', navigator.maxTouchPoints);
+console.log('Participant ID:', PID);
 
 // ===========================================
 // STIMULI
@@ -233,94 +308,195 @@ const WORDS_POS = ['Wonderful', 'Happy', 'Joy', 'Love', 'Peace', 'Pleasure', 'Gl
 const WORDS_NEG = ['Terrible', 'Awful', 'Horrible', 'Evil', 'Nasty', 'Failure', 'Agony', 'Pain', 'Disaster', 'Tragedy'];
 
 // ===========================================
-// MOBILE CONTROLS - COMPLETELY REWRITTEN
+// KEY SIMULATION - MULTIPLE METHODS
 // ===========================================
-window.pressKey = function(key) {
-  console.log('KEY PRESSED:', key);
+function simulateKeyPress(key) {
+  console.log('📱 SIMULATING KEY:', key);
   
-  const codes = {
-    'e': {keyCode: 69, code: 'KeyE', key: 'e'},
-    'i': {keyCode: 73, code: 'KeyI', key: 'i'},
-    ' ': {keyCode: 32, code: 'Space', key: ' '}
+  const keyMap = {
+    'e': { key: 'e', code: 'KeyE', keyCode: 69, which: 69 },
+    'i': { key: 'i', code: 'KeyI', keyCode: 73, which: 73 },
+    ' ': { key: ' ', code: 'Space', keyCode: 32, which: 32 }
   };
   
-  const info = codes[key];
+  const info = keyMap[key];
   
-  // Create and dispatch keydown event
-  const downEvent = new KeyboardEvent('keydown', {
-    bubbles: true,
-    cancelable: true,
+  // METHOD 1: KeyboardEvent
+  const keydownEvent = new KeyboardEvent('keydown', {
     key: info.key,
     code: info.code,
     keyCode: info.keyCode,
-    which: info.keyCode
+    which: info.which,
+    bubbles: true,
+    cancelable: true,
+    view: window
   });
   
-  document.dispatchEvent(downEvent);
+  const keyupEvent = new KeyboardEvent('keyup', {
+    key: info.key,
+    code: info.code,
+    keyCode: info.keyCode,
+    which: info.which,
+    bubbles: true,
+    cancelable: true,
+    view: window
+  });
   
-  // Create and dispatch keyup event after short delay
+  document.dispatchEvent(keydownEvent);
+  window.dispatchEvent(keydownEvent);
+  document.body.dispatchEvent(keydownEvent);
+  
   setTimeout(() => {
-    const upEvent = new KeyboardEvent('keyup', {
-      bubbles: true,
-      cancelable: true,
-      key: info.key,
-      code: info.code,
-      keyCode: info.keyCode,
-      which: info.keyCode
-    });
-    document.dispatchEvent(upEvent);
+    document.dispatchEvent(keyupEvent);
+    window.dispatchEvent(keyupEvent);
+    document.body.dispatchEvent(keyupEvent);
   }, 100);
+  
+  // METHOD 2: Try deprecated initKeyboardEvent for older browsers
+  try {
+    const oldDown = document.createEvent('KeyboardEvent');
+    if (oldDown.initKeyboardEvent) {
+      oldDown.initKeyboardEvent('keydown', true, true, window, info.key, 0, false, false, false, false);
+      document.dispatchEvent(oldDown);
+    }
+  } catch(e) {}
+  
+  // Visual feedback
+  flashButton(key);
 }
 
-function setControls(type, labels) {
-  const ctrl = document.getElementById('controls');
-  if (!ctrl || !IS_MOBILE) return;
+function flashButton(key) {
+  const buttons = document.querySelectorAll('.touch-key');
+  buttons.forEach(btn => {
+    if (btn.dataset.key === key) {
+      btn.classList.add('flash', 'pressed');
+      setTimeout(() => {
+        btn.classList.remove('flash', 'pressed');
+      }, 200);
+    }
+  });
+}
+
+// ===========================================
+// MOBILE CONTROLS - COMPLETELY REWRITTEN
+// ===========================================
+function setupTouchControls(mode, labels) {
+  console.log('🎮 SETTING UP CONTROLS:', mode, labels);
   
-  ctrl.innerHTML = '';
-  ctrl.className = 'touch-btns active';
+  const pad = document.getElementById('touch-pad');
+  if (!pad || !IS_MOBILE) {
+    console.log('❌ No touch pad or not mobile');
+    return;
+  }
   
-  if (type === 'single') {
+  pad.innerHTML = '';
+  pad.className = 'visible';
+  
+  if (mode === 'single') {
+    // Single continue button
     const btn = document.createElement('button');
-    btn.className = 'touch-btn';
-    btn.textContent = labels;
-    btn.setAttribute('onclick', "pressKey(' ')");
-    ctrl.appendChild(btn);
-  } else {
+    btn.className = 'touch-key';
+    btn.dataset.key = ' ';
+    btn.innerHTML = `<span class="key-letter">TAP</span><span class="key-label">${labels}</span>`;
+    
+    // Multiple event listeners for maximum compatibility
+    btn.addEventListener('touchstart', function(e) {
+      e.preventDefault();
+      console.log('👆 TOUCHSTART');
+      simulateKeyPress(' ');
+    }, { passive: false });
+    
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      console.log('🖱️ CLICK');
+      simulateKeyPress(' ');
+    }, { passive: false });
+    
+    btn.addEventListener('mousedown', function(e) {
+      e.preventDefault();
+      console.log('🖱️ MOUSEDOWN');
+      simulateKeyPress(' ');
+    }, { passive: false });
+    
+    pad.appendChild(btn);
+    
+  } else if (mode === 'double') {
+    // E and I buttons
     const btnE = document.createElement('button');
-    btnE.className = 'touch-btn';
-    btnE.innerHTML = `E<br><small>${labels.e}</small>`;
-    btnE.setAttribute('onclick', "pressKey('e')");
+    btnE.className = 'touch-key';
+    btnE.dataset.key = 'e';
+    btnE.innerHTML = `<span class="key-letter">E</span><span class="key-label">${labels.e}</span>`;
     
     const btnI = document.createElement('button');
-    btnI.className = 'touch-btn';
-    btnI.innerHTML = `I<br><small>${labels.i}</small>`;
-    btnI.setAttribute('onclick', "pressKey('i')");
+    btnI.className = 'touch-key';
+    btnI.dataset.key = 'i';
+    btnI.innerHTML = `<span class="key-letter">I</span><span class="key-label">${labels.i}</span>`;
     
-    ctrl.appendChild(btnE);
-    ctrl.appendChild(btnI);
+    // E button events
+    btnE.addEventListener('touchstart', function(e) {
+      e.preventDefault();
+      console.log('👆 TOUCHSTART E');
+      simulateKeyPress('e');
+    }, { passive: false });
+    
+    btnE.addEventListener('click', function(e) {
+      e.preventDefault();
+      console.log('🖱️ CLICK E');
+      simulateKeyPress('e');
+    }, { passive: false });
+    
+    btnE.addEventListener('mousedown', function(e) {
+      e.preventDefault();
+      console.log('🖱️ MOUSEDOWN E');
+      simulateKeyPress('e');
+    }, { passive: false });
+    
+    // I button events
+    btnI.addEventListener('touchstart', function(e) {
+      e.preventDefault();
+      console.log('👆 TOUCHSTART I');
+      simulateKeyPress('i');
+    }, { passive: false });
+    
+    btnI.addEventListener('click', function(e) {
+      e.preventDefault();
+      console.log('🖱️ CLICK I');
+      simulateKeyPress('i');
+    }, { passive: false });
+    
+    btnI.addEventListener('mousedown', function(e) {
+      e.preventDefault();
+      console.log('🖱️ MOUSEDOWN I');
+      simulateKeyPress('i');
+    }, { passive: false });
+    
+    pad.appendChild(btnE);
+    pad.appendChild(btnI);
   }
+  
+  console.log('✅ CONTROLS READY');
 }
 
-function clearControls() {
-  const ctrl = document.getElementById('controls');
-  if (ctrl) {
-    ctrl.className = 'touch-btns';
-    ctrl.innerHTML = '';
+function hideTouchControls() {
+  console.log('🚫 HIDING CONTROLS');
+  const pad = document.getElementById('touch-pad');
+  if (pad) {
+    pad.className = '';
+    pad.innerHTML = '';
   }
 }
 
 // ===========================================
-// FILE DOWNLOAD - USING FILESAVER.JS
+// FILE DOWNLOADS
 // ===========================================
 window.downloadCSV = function() {
   if (!EXPERIMENT_DATA) {
     alert('No data available!');
     return;
   }
-  
   const blob = new Blob([EXPERIMENT_DATA.csv], {type: 'text/csv;charset=utf-8'});
   saveAs(blob, `IAT_${PID}.csv`);
-  alert('✅ CSV file downloaded!\n\nPlease send this file to the researcher.');
+  alert('✅ CSV downloaded!\n\nSend this file to the researcher.');
 }
 
 window.downloadSummary = function() {
@@ -328,7 +504,6 @@ window.downloadSummary = function() {
     alert('No data available!');
     return;
   }
-  
   const summary = `IAT EXPERIMENT RESULTS
 =======================
 
@@ -337,20 +512,16 @@ Date & Time: ${EXPERIMENT_DATA.date}
 Device: ${EXPERIMENT_DATA.device}
 
 PERFORMANCE:
------------
 Total Trials: ${EXPERIMENT_DATA.trials}
 Accuracy: ${EXPERIMENT_DATA.accuracy}
-Mean Response Time: ${EXPERIMENT_DATA.rt}
+Mean RT: ${EXPERIMENT_DATA.rt}
 
 RESULTS:
---------
 D-Score: ${EXPERIMENT_DATA.dscore}
 Interpretation: ${EXPERIMENT_DATA.result}
 
-WHAT THIS MEANS:
 ${EXPERIMENT_DATA.explanation}
 `;
-  
   const blob = new Blob([summary], {type: 'text/plain;charset=utf-8'});
   saveAs(blob, `IAT_Summary_${PID}.txt`);
   alert('✅ Summary downloaded!');
@@ -368,22 +539,18 @@ const jsPsych = initJsPsych({
   display_element: 'experiment',
   
   on_finish: function() {
-    clearControls();
+    hideTouchControls();
+    console.log('📊 EXPERIMENT FINISHED - PROCESSING DATA');
     
-    console.log('=== PROCESSING DATA ===');
-    
-    // Get all IAT data
     const allData = jsPsych.data.get();
     const iatData = allData.filter([
       {trial_type: 'iat-image'},
       {trial_type: 'iat-html'}
     ]);
     
-    // Get critical trials
     const compatible = iatData.filter({block: 'compatible', critical: true});
     const incompatible = iatData.filter({block: 'incompatible', critical: true});
     
-    // Calculate D-score
     const meanComp = compatible.select('rt').mean();
     const meanIncomp = incompatible.select('rt').mean();
     const sdComp = compatible.select('rt').sd();
@@ -391,43 +558,39 @@ const jsPsych = initJsPsych({
     const pooledSD = Math.sqrt((sdComp * sdComp + sdIncomp * sdIncomp) / 2);
     const dScore = (meanIncomp - meanComp) / pooledSD;
     
-    // Calculate accuracy
     const correct = iatData.filter({correct: true}).count();
     const total = iatData.count();
     const accuracy = ((correct / total) * 100).toFixed(1);
     const meanRT = iatData.select('rt').mean().toFixed(0);
     
-    // Interpret D-score
     let interpretation = '';
     let explanation = '';
     
     if (Math.abs(dScore) < 0.15) {
       interpretation = 'No clear preference';
-      explanation = 'Your response times were similar for both pairings, suggesting no strong automatic preference.';
+      explanation = 'Response times were similar for both pairings.';
     } else if (dScore > 0.65) {
       interpretation = 'Strong Modi-Positive association';
-      explanation = 'You were much faster when Modi was paired with positive words, suggesting a strong automatic positive association.';
+      explanation = 'Much faster when Modi paired with positive words.';
     } else if (dScore > 0.35) {
       interpretation = 'Moderate Modi-Positive association';
-      explanation = 'You were noticeably faster when Modi was paired with positive words.';
+      explanation = 'Noticeably faster when Modi paired with positive words.';
     } else if (dScore > 0) {
       interpretation = 'Slight Modi-Positive association';
-      explanation = 'You were somewhat faster when Modi was paired with positive words.';
+      explanation = 'Somewhat faster when Modi paired with positive words.';
     } else if (dScore < -0.65) {
       interpretation = 'Strong Manmohan-Positive association';
-      explanation = 'You were much faster when Manmohan was paired with positive words, suggesting a strong automatic positive association.';
+      explanation = 'Much faster when Manmohan paired with positive words.';
     } else if (dScore < -0.35) {
       interpretation = 'Moderate Manmohan-Positive association';
-      explanation = 'You were noticeably faster when Manmohan was paired with positive words.';
+      explanation = 'Noticeably faster when Manmohan paired with positive words.';
     } else {
       interpretation = 'Slight Manmohan-Positive association';
-      explanation = 'You were somewhat faster when Manmohan was paired with positive words.';
+      explanation = 'Somewhat faster when Manmohan paired with positive words.';
     }
     
-    // Prepare CSV
     const csv = iatData.csv();
     
-    // Store globally
     EXPERIMENT_DATA = {
       id: PID,
       date: new Date().toLocaleString(),
@@ -441,10 +604,7 @@ const jsPsych = initJsPsych({
       csv: csv
     };
     
-    console.log('=== DATA READY ===');
-    console.log(EXPERIMENT_DATA);
-    
-    // Display results
+    console.log('✅ DATA READY:', EXPERIMENT_DATA);
     showResults();
   },
   
@@ -463,49 +623,35 @@ function showResults() {
     <div class="container">
       <div class="box">
         <h1>✅ Experiment Complete!</h1>
-        <p>Thank you for participating in this study.</p>
+        <p>Thank you for participating.</p>
         
         <div class="success">
-          <strong>Your data has been prepared for download.</strong>
+          <strong>Your data is ready to download.</strong>
         </div>
         
-        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <div class="result-item">
-            <strong>Participant ID:</strong> ${EXPERIMENT_DATA.id}
-          </div>
-          <div class="result-item">
-            <strong>Date:</strong> ${EXPERIMENT_DATA.date}
-          </div>
-          <div class="result-item">
-            <strong>Device:</strong> ${EXPERIMENT_DATA.device}
-          </div>
-          <div class="result-item">
-            <strong>Trials Completed:</strong> ${EXPERIMENT_DATA.trials}
-          </div>
-          <div class="result-item">
-            <strong>Accuracy:</strong> ${EXPERIMENT_DATA.accuracy}
-          </div>
-          <div class="result-item">
-            <strong>Avg Response Time:</strong> ${EXPERIMENT_DATA.rt}
-          </div>
-          <div class="result-item" style="margin-top: 15px; padding-top: 15px; border-top: 2px solid #ddd;">
+        <div style="background: #f8f9fa; padding: 18px; border-radius: 8px; margin: 18px 0;">
+          <div class="result-item"><strong>ID:</strong> ${EXPERIMENT_DATA.id}</div>
+          <div class="result-item"><strong>Date:</strong> ${EXPERIMENT_DATA.date}</div>
+          <div class="result-item"><strong>Device:</strong> ${EXPERIMENT_DATA.device}</div>
+          <div class="result-item"><strong>Trials:</strong> ${EXPERIMENT_DATA.trials}</div>
+          <div class="result-item"><strong>Accuracy:</strong> ${EXPERIMENT_DATA.accuracy}</div>
+          <div class="result-item"><strong>Avg RT:</strong> ${EXPERIMENT_DATA.rt}</div>
+          <div class="result-item" style="margin-top: 12px; padding-top: 12px; border-top: 2px solid #ddd;">
             <strong>D-Score:</strong> ${EXPERIMENT_DATA.dscore}
           </div>
-          <div class="result-item">
-            <strong>Result:</strong> ${EXPERIMENT_DATA.result}
-          </div>
-          <div style="margin-top: 15px; padding: 15px; background: white; border-radius: 6px;">
-            <small>${EXPERIMENT_DATA.explanation}</small>
+          <div class="result-item"><strong>Result:</strong> ${EXPERIMENT_DATA.result}</div>
+          <div style="margin-top: 12px; padding: 12px; background: white; border-radius: 6px; font-size: 14px;">
+            ${EXPERIMENT_DATA.explanation}
           </div>
         </div>
         
         <div class="warning">
-          <strong>⚠️ IMPORTANT:</strong> Please download your data and send it to the researcher!
+          <strong>⚠️ IMPORTANT:</strong> Download and send your data to the researcher!
         </div>
         
-        <button class="btn" onclick="downloadBoth()">📥 Download All Data (CSV + Summary)</button>
-        <button class="btn" onclick="downloadCSV()">📊 Download CSV Only</button>
-        <button class="btn" onclick="downloadSummary()">📄 Download Summary Only</button>
+        <button class="btn" onclick="downloadBoth()">📥 Download All Data</button>
+        <button class="btn" onclick="downloadCSV()">📊 Download CSV</button>
+        <button class="btn" onclick="downloadSummary()">📄 Download Summary</button>
       </div>
     </div>
   `;
@@ -516,73 +662,76 @@ function showResults() {
 // ===========================================
 const timeline = [];
 
-// Welcome
 timeline.push({
   type: jsPsychHtmlKeyboardResponse,
   stimulus: `
     <div class="container">
       <div class="box">
         <h1>Implicit Association Test</h1>
-        <p><strong>Research Study on Political Attitudes</strong></p>
-        <p>This study measures automatic associations between political figures and positive/negative words.</p>
+        <p><strong>Political Attitudes Study</strong></p>
+        <p>Measures automatic associations between political figures and positive/negative words.</p>
         
-        <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+        <div style="margin: 18px 0; padding: 15px; background: #f8f9fa; border-radius: 8px;">
           <p><strong>You will see:</strong></p>
           <p>• Photos of Narendra Modi<br>
           • Photos of Dr. Manmohan Singh<br>
-          • Positive words (wonderful, happy, etc.)<br>
-          • Negative words (terrible, awful, etc.)</p>
+          • Positive words<br>
+          • Negative words</p>
         </div>
         
         <div class="warning">
           <strong>Duration:</strong> 5-7 minutes<br>
-          <strong>Respond as quickly as possible!</strong>
+          <strong>Respond as fast as possible!</strong>
         </div>
         
-        <p style="text-align: center; font-weight: 600; margin-top: 30px;">
-          ${IS_MOBILE ? '👇 Tap CONTINUE below' : 'Press any key to start'}
+        <p style="text-align: center; font-weight: 700; margin-top: 25px; font-size: 18px;">
+          ${IS_MOBILE ? '👇 TAP CONTINUE BELOW 👇' : 'PRESS ANY KEY'}
         </p>
       </div>
     </div>
   `,
   on_load: () => {
-    if (IS_MOBILE) setControls('single', 'CONTINUE');
+    if (IS_MOBILE) {
+      console.log('📱 WELCOME SCREEN - SHOWING CONTROLS');
+      setupTouchControls('single', 'CONTINUE');
+    }
   },
-  on_finish: () => clearControls()
+  on_finish: () => hideTouchControls()
 });
 
-// Instructions
 timeline.push({
   type: jsPsychHtmlKeyboardResponse,
   stimulus: `
     <div class="container">
       <div class="box">
         <h1>Instructions</h1>
-        <p>Categorize each item using the ${IS_MOBILE ? '<strong>E and I buttons</strong> at the bottom' : '<strong>E and I keys</strong>'}.</p>
+        <p>Use ${IS_MOBILE ? '<strong>the E and I buttons below</strong>' : '<strong>E and I keys</strong>'} to categorize items.</p>
         
         <div class="cats">
-          <div class="cat">E<br><small>Left Category</small></div>
-          <div class="cat">I<br><small>Right Category</small></div>
+          <div class="cat">E<br>Left</div>
+          <div class="cat">I<br>Right</div>
         </div>
         
         <div class="warning">
-          <strong>If you make an error:</strong> An ✕ will appear. Press the ${IS_MOBILE ? 'other button' : 'correct key'}.
+          <strong>If wrong:</strong> An ✕ appears. Press ${IS_MOBILE ? 'the other button' : 'the correct key'}.
         </div>
         
-        <p style="text-align: center; font-weight: 600; margin-top: 30px;">
-          ${IS_MOBILE ? '👇 Tap BEGIN' : 'Press SPACE to begin'}
+        <p style="text-align: center; font-weight: 700; margin-top: 25px; font-size: 18px;">
+          ${IS_MOBILE ? '👇 TAP BEGIN BELOW 👇' : 'PRESS SPACE'}
         </p>
       </div>
     </div>
   `,
   choices: [' '],
   on_load: () => {
-    if (IS_MOBILE) setControls('single', 'BEGIN');
+    if (IS_MOBILE) {
+      console.log('📱 INSTRUCTIONS - SHOWING CONTROLS');
+      setupTouchControls('single', 'BEGIN');
+    }
   },
-  on_finish: () => clearControls()
+  on_finish: () => hideTouchControls()
 });
 
-// Block instructions
 function blockIntro(title, left, right, reversed) {
   return {
     type: jsPsychHtmlKeyboardResponse,
@@ -590,26 +739,28 @@ function blockIntro(title, left, right, reversed) {
       <div class="container">
         <div class="box">
           <h1>${title}</h1>
-          ${reversed ? '<div class="warning"><strong>⚠️ CATEGORIES SWITCHED SIDES!</strong></div>' : ''}
+          ${reversed ? '<div class="warning"><strong>⚠️ SIDES SWITCHED!</strong></div>' : ''}
           <div class="cats">
             <div class="cat">E<br>${left}</div>
             <div class="cat">I<br>${right}</div>
           </div>
-          <p style="text-align: center; font-weight: 600; margin-top: 30px;">
-            ${IS_MOBILE ? '👇 Tap START' : 'Press SPACE'}
+          <p style="text-align: center; font-weight: 700; margin-top: 25px; font-size: 18px;">
+            ${IS_MOBILE ? '👇 TAP START BELOW 👇' : 'PRESS SPACE'}
           </p>
         </div>
       </div>
     `,
     choices: [' '],
     on_load: () => {
-      if (IS_MOBILE) setControls('single', 'START');
+      if (IS_MOBILE) {
+        console.log('📱 BLOCK INTRO - SHOWING CONTROLS');
+        setupTouchControls('single', 'START');
+      }
     },
-    on_finish: () => clearControls()
+    on_finish: () => hideTouchControls()
   };
 }
 
-// Image trial
 function imgTrial(block, lCat, rCat, lShort, rShort, crit) {
   return {
     type: jsPsychIatImage,
@@ -627,12 +778,14 @@ function imgTrial(block, lCat, rCat, lShort, rShort, crit) {
     response_ends_trial: true,
     data: {block: block, type: 'image', critical: crit || false},
     on_load: () => {
-      if (IS_MOBILE) setControls('double', {e: lShort, i: rShort});
+      if (IS_MOBILE) {
+        console.log('📱 IMAGE TRIAL - SHOWING CONTROLS');
+        setupTouchControls('double', {e: lShort, i: rShort});
+      }
     }
   };
 }
 
-// Word trial
 function wordTrial(block, lCat, rCat, lShort, rShort, crit) {
   return {
     type: jsPsychIatHtml,
@@ -650,13 +803,16 @@ function wordTrial(block, lCat, rCat, lShort, rShort, crit) {
     response_ends_trial: true,
     data: {block: block, type: 'word', critical: crit || false},
     on_load: () => {
-      if (IS_MOBILE) setControls('double', {e: lShort, i: rShort});
+      if (IS_MOBILE) {
+        console.log('📱 WORD TRIAL - SHOWING CONTROLS');
+        setupTouchControls('double', {e: lShort, i: rShort});
+      }
     }
   };
 }
 
 // BLOCK 1
-timeline.push(blockIntro('Categorize Political Figures', 'Modi', 'Manmohan', false));
+timeline.push(blockIntro('Categorize Leaders', 'Modi', 'Manmohan', false));
 timeline.push({
   timeline: [imgTrial('practice1', 'Modi', 'Manmohan', 'Modi', 'Manmohan')],
   timeline_variables: [
@@ -680,7 +836,7 @@ timeline.push({
 });
 
 // BLOCK 3
-timeline.push(blockIntro('Combined Task', 'Modi or Positive', 'Manmohan or Negative', false));
+timeline.push(blockIntro('Combined', 'Modi or Positive', 'Manmohan or Negative', false));
 timeline.push({
   timeline: [
     {
@@ -730,7 +886,7 @@ timeline.push({
 });
 
 // BLOCK 5
-timeline.push(blockIntro('Categorize Political Figures', 'Manmohan', 'Modi', true));
+timeline.push(blockIntro('Categorize Leaders', 'Manmohan', 'Modi', true));
 timeline.push({
   timeline: [imgTrial('practice4', 'Manmohan', 'Modi', 'Manmohan', 'Modi')],
   timeline_variables: [
@@ -742,7 +898,7 @@ timeline.push({
 });
 
 // BLOCK 6
-timeline.push(blockIntro('Combined Task', 'Manmohan or Positive', 'Modi or Negative', false));
+timeline.push(blockIntro('Combined', 'Manmohan or Positive', 'Modi or Negative', false));
 timeline.push({
   timeline: [
     {
@@ -791,30 +947,33 @@ timeline.push({
   randomize_order: true
 });
 
-// Debrief
 timeline.push({
   type: jsPsychHtmlKeyboardResponse,
   stimulus: `
     <div class="container">
       <div class="box">
         <h1>Almost Done!</h1>
-        <p>You have completed all trials.</p>
+        <p>You completed all trials.</p>
         <div class="success">
-          The IAT measures automatic associations by comparing your response times when different concepts are paired together.
+          The IAT measures automatic associations by comparing response times.
         </div>
-        <p style="text-align: center; font-weight: 600; margin-top: 30px;">
-          ${IS_MOBILE ? '👇 Tap to see your results' : 'Press any key for results'}
+        <p style="text-align: center; font-weight: 700; margin-top: 25px; font-size: 18px;">
+          ${IS_MOBILE ? '👇 TAP FOR RESULTS 👇' : 'PRESS ANY KEY'}
         </p>
       </div>
     </div>
   `,
   on_load: () => {
-    if (IS_MOBILE) setControls('single', 'VIEW RESULTS');
+    if (IS_MOBILE) {
+      console.log('📱 DEBRIEF - SHOWING CONTROLS');
+      setupTouchControls('single', 'VIEW RESULTS');
+    }
   },
-  on_finish: () => clearControls()
+  on_finish: () => hideTouchControls()
 });
 
-// START EXPERIMENT
+// START
+console.log('🚀 STARTING EXPERIMENT');
 jsPsych.run(timeline);
 </script>
 </html>

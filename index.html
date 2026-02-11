@@ -4,13 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <title>IAT Study</title>
+  <title>IAT Study - Political Attitudes</title>
 
   <!-- jsPsych -->
   <script src="https://unpkg.com/jspsych@7.3.4"></script>
   <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.1.3"></script>
   <script src="https://unpkg.com/@jspsych/plugin-iat-image@1.1.3"></script>
   <script src="https://unpkg.com/@jspsych/plugin-iat-html@1.1.3"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-survey-html-form@1.0.3"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-survey-multi-choice@1.1.3"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-survey-likert@1.1.3"></script>
   <link href="https://unpkg.com/jspsych@7.3.4/css/jspsych.css" rel="stylesheet" />
   
   <!-- FileSaver -->
@@ -86,6 +89,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      overflow-y: auto;
     }
     
     .box {
@@ -95,12 +99,20 @@
       box-shadow: 0 4px 20px rgba(0,0,0,0.3);
       width: 100%;
       max-width: 900px;
+      max-height: 90vh;
+      overflow-y: auto;
     }
     
     h1 {
       font-size: 3.5vh;
       margin-bottom: 2vh;
       color: #222;
+    }
+    
+    h2 {
+      font-size: 2.5vh;
+      margin: 2vh 0 1vh 0;
+      color: #444;
     }
     
     p {
@@ -139,6 +151,15 @@
     .success {
       background: #d4edda;
       border-left: 4px solid #28a745;
+      padding: 2vh;
+      margin: 2vh 0;
+      border-radius: 4px;
+      font-size: 2vh;
+    }
+    
+    .info {
+      background: #d1ecf1;
+      border-left: 4px solid #0c5460;
       padding: 2vh;
       margin: 2vh 0;
       border-radius: 4px;
@@ -226,6 +247,67 @@
       font-weight: 600;
     }
     
+    /* SURVEY STYLES */
+    .jspsych-survey-multi-choice-question,
+    .jspsych-survey-likert-question,
+    .jspsych-content {
+      user-select: text !important;
+      -webkit-user-select: text !important;
+    }
+    
+    .jspsych-survey-multi-choice-text,
+    .jspsych-survey-likert-text {
+      font-size: 2.2vh !important;
+      color: #333 !important;
+      margin-bottom: 1.5vh !important;
+      font-weight: 600 !important;
+    }
+    
+    .jspsych-survey-multi-choice-option,
+    .jspsych-survey-likert-opts {
+      font-size: 2vh !important;
+      margin: 1vh 0 !important;
+    }
+    
+    input[type="radio"] {
+      width: 20px !important;
+      height: 20px !important;
+      margin-right: 10px !important;
+      cursor: pointer !important;
+    }
+    
+    label {
+      cursor: pointer !important;
+      user-select: none !important;
+      -webkit-user-select: none !important;
+    }
+    
+    input[type="text"],
+    input[type="number"] {
+      font-size: 2vh !important;
+      padding: 1vh !important;
+      border: 2px solid #ddd !important;
+      border-radius: 4px !important;
+      width: 100% !important;
+      max-width: 200px !important;
+      user-select: text !important;
+      -webkit-user-select: text !important;
+    }
+    
+    #jspsych-survey-html-form-next,
+    #jspsych-survey-multi-choice-next,
+    #jspsych-survey-likert-next {
+      background: #2c3e50 !important;
+      color: white !important;
+      border: none !important;
+      padding: 2vh 4vw !important;
+      font-size: 2.5vh !important;
+      font-weight: 600 !important;
+      border-radius: 8px !important;
+      cursor: pointer !important;
+      margin-top: 3vh !important;
+    }
+    
     /* TRIAL DISPLAY */
     .jspsych-iat-stim {
       font-size: 6vh !important;
@@ -295,21 +377,23 @@
 const IS_MOBILE = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || window.innerWidth <= 768;
 const PID = 'P' + Date.now();
 let EXPERIMENT_DATA = null;
+let DEMOGRAPHIC_DATA = {};
+let POST_TEST_DATA = {};
 
 console.log('=== IAT STARTED ===');
 console.log('Mobile:', IS_MOBILE);
 console.log('Participant:', PID);
 
 // ===========================================
-// STIMULI
+// STIMULI - UPDATED WORDS
 // ===========================================
 const IMG_MODI = ['imagesmodi1.jpg.jpeg', 'imagesmodi2.jpg.jpeg', 'imagesmodi3.jpg.jpeg', 'imagesmodi4.jpg.jpeg'];
 const IMG_MANMOHAN = ['imagesprevious1.jpg.jpeg', 'imagesprevious2.jpg.jpeg', 'imagesprevious3.jpg.jpeg', 'imagesprevious4.jpg.jpeg'];
-const WORDS_POS = ['Wonderful', 'Happy', 'Joy', 'Love', 'Peace', 'Pleasure', 'Glorious', 'Laughter', 'Success', 'Hope'];
-const WORDS_NEG = ['Terrible', 'Awful', 'Horrible', 'Evil', 'Nasty', 'Failure', 'Agony', 'Pain', 'Disaster', 'Tragedy'];
+const WORDS_POS = ['Lovely', 'Joyous', 'Pleasing', 'Glorious', 'Delightful', 'Beautiful', 'Enjoy', 'Spectacular'];
+const WORDS_NEG = ['Pain', 'Yucky', 'Failure', 'Disgust', 'Humiliate', 'Tragic', 'Rotten', 'Annoy'];
 
 // ===========================================
-// KEY PRESS FUNCTION - DIRECT METHOD
+// KEY PRESS FUNCTION
 // ===========================================
 window.doKeyPress = function(key) {
   console.log('🔑 KEY PRESSED:', key);
@@ -322,7 +406,6 @@ window.doKeyPress = function(key) {
   
   const info = codes[key];
   
-  // Create events
   const down = new KeyboardEvent('keydown', {
     key: info.key,
     code: info.code,
@@ -341,7 +424,6 @@ window.doKeyPress = function(key) {
     cancelable: true
   });
   
-  // Dispatch to all possible targets
   document.dispatchEvent(down);
   setTimeout(() => document.dispatchEvent(up), 50);
 }
@@ -393,9 +475,9 @@ window.downloadCSV = function() {
     alert('No data available!');
     return;
   }
-  const blob = new Blob([EXPERIMENT_DATA.csv], {type: 'text/csv;charset=utf-8'});
-  saveAs(blob, `IAT_${PID}.csv`);
-  alert('✅ CSV downloaded! Send this file to the researcher.');
+  const blob = new Blob([EXPERIMENT_DATA.fullCSV], {type: 'text/csv;charset=utf-8'});
+  saveAs(blob, `IAT_FullData_${PID}.csv`);
+  alert('✅ Full data CSV downloaded!');
 }
 
 window.downloadSummary = function() {
@@ -403,32 +485,14 @@ window.downloadSummary = function() {
     alert('No data available!');
     return;
   }
-  const summary = `IAT EXPERIMENT RESULTS
-=======================
-
-Participant ID: ${EXPERIMENT_DATA.id}
-Date & Time: ${EXPERIMENT_DATA.date}
-Device: ${EXPERIMENT_DATA.device}
-
-PERFORMANCE:
-Total Trials: ${EXPERIMENT_DATA.trials}
-Accuracy: ${EXPERIMENT_DATA.accuracy}
-Mean RT: ${EXPERIMENT_DATA.rt}
-
-RESULTS:
-D-Score: ${EXPERIMENT_DATA.dscore}
-Interpretation: ${EXPERIMENT_DATA.result}
-
-${EXPERIMENT_DATA.explanation}
-`;
-  const blob = new Blob([summary], {type: 'text/plain;charset=utf-8'});
-  saveAs(blob, `IAT_Summary_${PID}.txt`);
-  alert('✅ Summary downloaded!');
+  const blob = new Blob([EXPERIMENT_DATA.summaryCSV], {type: 'text/csv;charset=utf-8'});
+  saveAs(blob, `IAT_Summary_${PID}.csv`);
+  alert('✅ Summary CSV downloaded!');
 }
 
 window.downloadBoth = function() {
-  downloadCSV();
-  setTimeout(() => downloadSummary(), 500);
+  downloadSummary();
+  setTimeout(() => downloadCSV(), 500);
 }
 
 // ===========================================
@@ -440,71 +504,7 @@ const jsPsych = initJsPsych({
   on_finish: function() {
     hideControls();
     console.log('📊 PROCESSING DATA');
-    
-    const allData = jsPsych.data.get();
-    const iatData = allData.filter([
-      {trial_type: 'iat-image'},
-      {trial_type: 'iat-html'}
-    ]);
-    
-    const compatible = iatData.filter({block: 'compatible', critical: true});
-    const incompatible = iatData.filter({block: 'incompatible', critical: true});
-    
-    const meanComp = compatible.select('rt').mean();
-    const meanIncomp = incompatible.select('rt').mean();
-    const sdComp = compatible.select('rt').sd();
-    const sdIncomp = incompatible.select('rt').sd();
-    const pooledSD = Math.sqrt((sdComp * sdComp + sdIncomp * sdIncomp) / 2);
-    const dScore = (meanIncomp - meanComp) / pooledSD;
-    
-    const correct = iatData.filter({correct: true}).count();
-    const total = iatData.count();
-    const accuracy = ((correct / total) * 100).toFixed(1);
-    const meanRT = iatData.select('rt').mean().toFixed(0);
-    
-    let interpretation = '';
-    let explanation = '';
-    
-    if (Math.abs(dScore) < 0.15) {
-      interpretation = 'No clear preference';
-      explanation = 'Response times were similar for both pairings.';
-    } else if (dScore > 0.65) {
-      interpretation = 'Strong Modi-Positive association';
-      explanation = 'Much faster when Modi paired with positive words.';
-    } else if (dScore > 0.35) {
-      interpretation = 'Moderate Modi-Positive association';
-      explanation = 'Noticeably faster when Modi paired with positive words.';
-    } else if (dScore > 0) {
-      interpretation = 'Slight Modi-Positive association';
-      explanation = 'Somewhat faster when Modi paired with positive words.';
-    } else if (dScore < -0.65) {
-      interpretation = 'Strong Manmohan-Positive association';
-      explanation = 'Much faster when Manmohan paired with positive words.';
-    } else if (dScore < -0.35) {
-      interpretation = 'Moderate Manmohan-Positive association';
-      explanation = 'Noticeably faster when Manmohan paired with positive words.';
-    } else {
-      interpretation = 'Slight Manmohan-Positive association';
-      explanation = 'Somewhat faster when Manmohan paired with positive words.';
-    }
-    
-    const csv = iatData.csv();
-    
-    EXPERIMENT_DATA = {
-      id: PID,
-      date: new Date().toLocaleString(),
-      device: IS_MOBILE ? 'Mobile' : 'Desktop',
-      trials: total,
-      accuracy: accuracy + '%',
-      rt: meanRT + 'ms',
-      dscore: dScore.toFixed(3),
-      result: interpretation,
-      explanation: explanation,
-      csv: csv
-    };
-    
-    console.log('✅ DATA READY');
-    showResults();
+    processAndDisplayResults();
   },
   
   on_data_update: function(data) {
@@ -514,24 +514,143 @@ const jsPsych = initJsPsych({
   }
 });
 
+function processAndDisplayResults() {
+  const allData = jsPsych.data.get();
+  
+  // Get demographic data
+  const demoTrial = allData.filter({trial_type: 'survey-html-form'}).values()[0];
+  if (demoTrial && demoTrial.response) {
+    DEMOGRAPHIC_DATA = demoTrial.response;
+  }
+  
+  // Get post-test data
+  const postTestTrials = allData.filter({phase: 'post_test'}).values();
+  postTestTrials.forEach(trial => {
+    if (trial.response) {
+      Object.assign(POST_TEST_DATA, trial.response);
+    }
+  });
+  
+  // Get IAT data
+  const iatData = allData.filter([
+    {trial_type: 'iat-image'},
+    {trial_type: 'iat-html'}
+  ]);
+  
+  const compatible = iatData.filter({block: 'compatible', critical: true});
+  const incompatible = iatData.filter({block: 'incompatible', critical: true});
+  
+  const meanComp = compatible.select('rt').mean();
+  const meanIncomp = incompatible.select('rt').mean();
+  const sdComp = compatible.select('rt').sd();
+  const sdIncomp = incompatible.select('rt').sd();
+  const pooledSD = Math.sqrt((sdComp * sdComp + sdIncomp * sdIncomp) / 2);
+  const dScore = (meanIncomp - meanComp) / pooledSD;
+  
+  const correct = iatData.filter({correct: true}).count();
+  const total = iatData.count();
+  const accuracy = ((correct / total) * 100).toFixed(1);
+  const meanRT = iatData.select('rt').mean().toFixed(0);
+  
+  let interpretation = '';
+  let explanation = '';
+  
+  if (Math.abs(dScore) < 0.15) {
+    interpretation = 'No clear preference';
+    explanation = 'Response times were similar for both pairings.';
+  } else if (dScore > 0.65) {
+    interpretation = 'Strong Modi-Positive association';
+    explanation = 'Much faster when Modi paired with positive words.';
+  } else if (dScore > 0.35) {
+    interpretation = 'Moderate Modi-Positive association';
+    explanation = 'Noticeably faster when Modi paired with positive words.';
+  } else if (dScore > 0) {
+    interpretation = 'Slight Modi-Positive association';
+    explanation = 'Somewhat faster when Modi paired with positive words.';
+  } else if (dScore < -0.65) {
+    interpretation = 'Strong Manmohan-Positive association';
+    explanation = 'Much faster when Manmohan paired with positive words.';
+  } else if (dScore < -0.35) {
+    interpretation = 'Moderate Manmohan-Positive association';
+    explanation = 'Noticeably faster when Manmohan paired with positive words.';
+  } else {
+    interpretation = 'Slight Manmohan-Positive association';
+    explanation = 'Somewhat faster when Manmohan paired with positive words.';
+  }
+  
+  // Create comprehensive summary CSV
+  const summaryCSV = createSummaryCSV(PID, dScore, interpretation, accuracy, meanRT, total, meanComp, meanIncomp);
+  
+  // Create full trial-by-trial CSV with demographics
+  const fullCSV = createFullCSV(iatData);
+  
+  EXPERIMENT_DATA = {
+    id: PID,
+    date: new Date().toLocaleString(),
+    device: IS_MOBILE ? 'Mobile' : 'Desktop',
+    trials: total,
+    accuracy: accuracy + '%',
+    rt: meanRT + 'ms',
+    dscore: dScore.toFixed(3),
+    result: interpretation,
+    explanation: explanation,
+    summaryCSV: summaryCSV,
+    fullCSV: fullCSV
+  };
+  
+  console.log('✅ DATA READY');
+  showResults();
+}
+
+function createSummaryCSV(pid, dscore, interp, acc, rt, trials, rtComp, rtIncomp) {
+  let csv = 'participant_id,date_time,device,age,gender,education,political_orientation,state,';
+  csv += 'd_score,interpretation,accuracy_percent,mean_rt_ms,total_trials,rt_compatible_ms,rt_incompatible_ms,';
+  csv += 'preference_modi,preference_manmohan,awareness_bias,thermometer_modi,thermometer_manmohan,voted_2024\n';
+  
+  csv += `"${pid}","${new Date().toISOString()}","${IS_MOBILE ? 'Mobile' : 'Desktop'}",`;
+  csv += `"${DEMOGRAPHIC_DATA.age || 'NA'}","${DEMOGRAPHIC_DATA.gender || 'NA'}","${DEMOGRAPHIC_DATA.education || 'NA'}",`;
+  csv += `"${DEMOGRAPHIC_DATA.political || 'NA'}","${DEMOGRAPHIC_DATA.state || 'NA'}",`;
+  csv += `${dscore.toFixed(3)},"${interp}",${acc},${rt},${trials},${rtComp.toFixed(0)},${rtIncomp.toFixed(0)},`;
+  csv += `"${POST_TEST_DATA.preference_modi || 'NA'}","${POST_TEST_DATA.preference_manmohan || 'NA'}",`;
+  csv += `"${POST_TEST_DATA.awareness || 'NA'}","${POST_TEST_DATA.thermo_modi || 'NA'}","${POST_TEST_DATA.thermo_manmohan || 'NA'}",`;
+  csv += `"${POST_TEST_DATA.voted || 'NA'}"\n`;
+  
+  return csv;
+}
+
+function createFullCSV(iatData) {
+  let csv = 'participant_id,trial_number,block,stimulus_type,stimulus,correct_response,user_response,correct,rt_ms,';
+  csv += 'age,gender,education,political_orientation,state,timestamp\n';
+  
+  const trials = iatData.values();
+  trials.forEach((trial, idx) => {
+    csv += `"${PID}",${idx + 1},"${trial.block}","${trial.type}","${trial.stimulus}",`;
+    csv += `"${trial.stim_key_association}","${trial.response}",${trial.correct ? 'TRUE' : 'FALSE'},${trial.rt},`;
+    csv += `"${DEMOGRAPHIC_DATA.age || 'NA'}","${DEMOGRAPHIC_DATA.gender || 'NA'}","${DEMOGRAPHIC_DATA.education || 'NA'}",`;
+    csv += `"${DEMOGRAPHIC_DATA.political || 'NA'}","${DEMOGRAPHIC_DATA.state || 'NA'}","${trial.timestamp}"\n`;
+  });
+  
+  return csv;
+}
+
 function showResults() {
   document.getElementById('experiment').innerHTML = `
     <div class="container">
       <div class="box">
         <h1>✅ Experiment Complete!</h1>
-        <p>Thank you for participating.</p>
+        <p>Thank you for participating in this research study.</p>
         
         <div class="success">
-          <strong>Your data is ready to download.</strong>
+          <strong>Your data has been processed and is ready for download.</strong>
         </div>
         
         <div style="background: #f8f9fa; padding: 2vh; border-radius: 8px; margin: 2vh 0;">
-          <div class="result-item"><strong>ID:</strong> ${EXPERIMENT_DATA.id}</div>
-          <div class="result-item"><strong>Date:</strong> ${EXPERIMENT_DATA.date}</div>
+          <div class="result-item"><strong>Participant ID:</strong> ${EXPERIMENT_DATA.id}</div>
+          <div class="result-item"><strong>Completion Time:</strong> ${EXPERIMENT_DATA.date}</div>
           <div class="result-item"><strong>Device:</strong> ${EXPERIMENT_DATA.device}</div>
-          <div class="result-item"><strong>Trials:</strong> ${EXPERIMENT_DATA.trials}</div>
+          <div class="result-item"><strong>Total Trials:</strong> ${EXPERIMENT_DATA.trials}</div>
           <div class="result-item"><strong>Accuracy:</strong> ${EXPERIMENT_DATA.accuracy}</div>
-          <div class="result-item"><strong>Avg RT:</strong> ${EXPERIMENT_DATA.rt}</div>
+          <div class="result-item"><strong>Average Response Time:</strong> ${EXPERIMENT_DATA.rt}</div>
           <div class="result-item" style="margin-top: 2vh; padding-top: 2vh; border-top: 2px solid #ddd;">
             <strong>D-Score:</strong> ${EXPERIMENT_DATA.dscore}
           </div>
@@ -541,91 +660,27 @@ function showResults() {
           </div>
         </div>
         
-        <div class="warning">
-          <strong>⚠️ IMPORTANT:</strong> Download and send your data to the researcher!
+        <div class="info">
+          <strong>📊 Two data files available:</strong><br>
+          <strong>Summary CSV:</strong> One row with all key results & demographics<br>
+          <strong>Full CSV:</strong> Trial-by-trial data with demographics
         </div>
         
-        <button class="btn" onclick="downloadBoth()">📥 Download All Data</button>
-        <button class="btn" onclick="downloadCSV()">📊 Download CSV</button>
-        <button class="btn" onclick="downloadSummary()">📄 Download Summary</button>
+        <div class="warning">
+          <strong>⚠️ IMPORTANT:</strong> Please download and send BOTH files to the researcher!
+        </div>
+        
+        <button class="btn" onclick="downloadBoth()">📥 Download Both Files</button>
+        <button class="btn" onclick="downloadSummary()">📊 Download Summary CSV Only</button>
+        <button class="btn" onclick="downloadCSV()">📋 Download Full Data CSV Only</button>
       </div>
     </div>
   `;
 }
 
 // ===========================================
-// TIMELINE
+// TRIAL FUNCTIONS
 // ===========================================
-const timeline = [];
-
-timeline.push({
-  type: jsPsychHtmlKeyboardResponse,
-  stimulus: `
-    <div class="container">
-      <div class="box">
-        <h1>Implicit Association Test</h1>
-        <p><strong>Political Attitudes Study</strong></p>
-        <p>Measures automatic associations between political figures and positive/negative words.</p>
-        
-        <div style="margin: 2vh 0; padding: 2vh; background: #f8f9fa; border-radius: 8px;">
-          <p><strong>You will see:</strong></p>
-          <p>• Photos of Narendra Modi<br>
-          • Photos of Dr. Manmohan Singh<br>
-          • Positive words<br>
-          • Negative words</p>
-        </div>
-        
-        <div class="warning">
-          <strong>Duration:</strong> 5-7 minutes<br>
-          <strong>${IS_MOBILE ? 'Keep device in LANDSCAPE mode!' : 'Respond as fast as possible!'}</strong>
-        </div>
-        
-        <p style="text-align: center; font-weight: 700; margin-top: 3vh; font-size: 3vh;">
-          ${IS_MOBILE ? '👇 TAP CONTINUE BELOW 👇' : 'PRESS ANY KEY'}
-        </p>
-      </div>
-    </div>
-  `,
-  on_load: function() {
-    if (IS_MOBILE) setupControls('single', 'CONTINUE');
-  },
-  on_finish: function() {
-    hideControls();
-  }
-});
-
-timeline.push({
-  type: jsPsychHtmlKeyboardResponse,
-  stimulus: `
-    <div class="container">
-      <div class="box">
-        <h1>Instructions</h1>
-        <p>Use ${IS_MOBILE ? '<strong>the E and I buttons below</strong>' : '<strong>E and I keys</strong>'} to categorize items.</p>
-        
-        <div class="cats">
-          <div class="cat">E = Left</div>
-          <div class="cat">I = Right</div>
-        </div>
-        
-        <div class="warning">
-          <strong>If wrong:</strong> An ✕ appears. Press ${IS_MOBILE ? 'the other button' : 'the correct key'}.
-        </div>
-        
-        <p style="text-align: center; font-weight: 700; margin-top: 3vh; font-size: 3vh;">
-          ${IS_MOBILE ? '👇 TAP BEGIN BELOW 👇' : 'PRESS SPACE'}
-        </p>
-      </div>
-    </div>
-  `,
-  choices: [' '],
-  on_load: function() {
-    if (IS_MOBILE) setupControls('single', 'BEGIN');
-  },
-  on_finish: function() {
-    hideControls();
-  }
-});
-
 function blockIntro(title, left, right, reversed) {
   return {
     type: jsPsychHtmlKeyboardResponse,
@@ -633,7 +688,7 @@ function blockIntro(title, left, right, reversed) {
       <div class="container">
         <div class="box">
           <h1>${title}</h1>
-          ${reversed ? '<div class="warning"><strong>⚠️ SIDES SWITCHED!</strong></div>' : ''}
+          ${reversed ? '<div class="warning"><strong>⚠️ CATEGORIES SWITCHED!</strong></div>' : ''}
           <div class="cats">
             <div class="cat">E = ${left}</div>
             <div class="cat">I = ${right}</div>
@@ -698,8 +753,152 @@ function wordTrial(block, lCat, rCat, lShort, rShort, crit) {
   };
 }
 
-// BLOCK 1
-timeline.push(blockIntro('Categorize Leaders', 'Modi', 'Manmohan', false));
+// ===========================================
+// TIMELINE
+// ===========================================
+const timeline = [];
+
+// WELCOME
+timeline.push({
+  type: jsPsychHtmlKeyboardResponse,
+  stimulus: `
+    <div class="container">
+      <div class="box">
+        <h1>Political Attitudes Study</h1>
+        <h2>Implicit Association Test (IAT)</h2>
+        
+        <div class="info">
+          <strong>Purpose:</strong> This study measures automatic associations between political figures and positive/negative concepts.
+        </div>
+        
+        <p><strong>What you'll do:</strong></p>
+        <ul style="margin-left: 3vw; font-size: 2vh; color: #555;">
+          <li>Answer some demographic questions</li>
+          <li>Complete a categorization task with images and words</li>
+          <li>Answer a few follow-up questions</li>
+        </ul>
+        
+        <div class="warning">
+          <strong>Time:</strong> Approximately 10-12 minutes<br>
+          <strong>Confidentiality:</strong> All responses are anonymous
+        </div>
+        
+        ${IS_MOBILE ? '<p style="color: #d63031; font-weight: 700; text-align: center; margin-top: 2vh;">Please keep device in LANDSCAPE mode</p>' : ''}
+        
+        <p style="text-align: center; font-weight: 700; margin-top: 3vh; font-size: 3vh;">
+          ${IS_MOBILE ? '👇 TAP TO BEGIN 👇' : 'PRESS ANY KEY TO BEGIN'}
+        </p>
+      </div>
+    </div>
+  `,
+  on_load: function() {
+    if (IS_MOBILE) setupControls('single', 'BEGIN');
+  },
+  on_finish: function() {
+    hideControls();
+  }
+});
+
+// DEMOGRAPHICS
+timeline.push({
+  type: jsPsychSurveyHtmlForm,
+  preamble: `
+    <h1>Part 1: Demographic Information</h1>
+    <p>Please answer the following questions about yourself.</p>
+  `,
+  html: `
+    <div style="margin: 2vh 0;">
+      <label style="display: block; margin-bottom: 1vh; font-weight: 600;">1. What is your age?</label>
+      <input type="number" name="age" min="18" max="100" required style="user-select: text !important;">
+    </div>
+    
+    <div style="margin: 2vh 0;">
+      <label style="display: block; margin-bottom: 1vh; font-weight: 600;">2. What is your gender?</label>
+      <label style="display: block; margin: 0.5vh 0;"><input type="radio" name="gender" value="Male" required> Male</label>
+      <label style="display: block; margin: 0.5vh 0;"><input type="radio" name="gender" value="Female" required> Female</label>
+      <label style="display: block; margin: 0.5vh 0;"><input type="radio" name="gender" value="Non-binary" required> Non-binary</label>
+      <label style="display: block; margin: 0.5vh 0;"><input type="radio" name="gender" value="Prefer not to say" required> Prefer not to say</label>
+    </div>
+    
+    <div style="margin: 2vh 0;">
+      <label style="display: block; margin-bottom: 1vh; font-weight: 600;">3. What is your highest level of education?</label>
+      <label style="display: block; margin: 0.5vh 0;"><input type="radio" name="education" value="Less than high school" required> Less than high school</label>
+      <label style="display: block; margin: 0.5vh 0;"><input type="radio" name="education" value="High school graduate" required> High school graduate</label>
+      <label style="display: block; margin: 0.5vh 0;"><input type="radio" name="education" value="Some college" required> Some college</label>
+      <label style="display: block; margin: 0.5vh 0;"><input type="radio" name="education" value="Bachelor's degree" required> Bachelor's degree</label>
+      <label style="display: block; margin: 0.5vh 0;"><input type="radio" name="education" value="Graduate degree" required> Graduate degree (Master's, PhD, etc.)</label>
+    </div>
+    
+    <div style="margin: 2vh 0;">
+      <label style="display: block; margin-bottom: 1vh; font-weight: 600;">4. Which state/union territory do you currently reside in?</label>
+      <input type="text" name="state" required placeholder="e.g., Maharashtra, Delhi" style="user-select: text !important;">
+    </div>
+    
+    <div style="margin: 2vh 0;">
+      <label style="display: block; margin-bottom: 1vh; font-weight: 600;">5. How would you describe your political orientation?</label>
+      <label style="display: block; margin: 0.5vh 0;"><input type="radio" name="political" value="Very liberal" required> Very liberal</label>
+      <label style="display: block; margin: 0.5vh 0;"><input type="radio" name="political" value="Liberal" required> Liberal</label>
+      <label style="display: block; margin: 0.5vh 0;"><input type="radio" name="political" value="Moderate" required> Moderate</label>
+      <label style="display: block; margin: 0.5vh 0;"><input type="radio" name="political" value="Conservative" required> Conservative</label>
+      <label style="display: block; margin: 0.5vh 0;"><input type="radio" name="political" value="Very conservative" required> Very conservative</label>
+      <label style="display: block; margin: 0.5vh 0;"><input type="radio" name="political" value="No preference" required> No preference</label>
+    </div>
+  `,
+  button_label: 'Continue',
+  on_load: function() {
+    hideControls();
+  }
+});
+
+// IAT INSTRUCTIONS
+timeline.push({
+  type: jsPsychHtmlKeyboardResponse,
+  stimulus: `
+    <div class="container">
+      <div class="box">
+        <h1>Part 2: Categorization Task</h1>
+        
+        <p>In this task, you will see:</p>
+        <ul style="margin-left: 3vw; font-size: 2vh; color: #555; line-height: 1.6;">
+          <li>Photos of <strong>Narendra Modi</strong></li>
+          <li>Photos of <strong>Dr. Manmohan Singh</strong></li>
+          <li><strong>Positive words</strong> (e.g., Lovely, Joyous, Beautiful)</li>
+          <li><strong>Negative words</strong> (e.g., Pain, Tragic, Disgust)</li>
+        </ul>
+        
+        <div class="info">
+          <strong>Your task:</strong> Sort items into categories as quickly as possible using the E and I keys.
+        </div>
+        
+        <div class="cats">
+          <div class="cat">E = Left category</div>
+          <div class="cat">I = Right category</div>
+        </div>
+        
+        <div class="warning">
+          <strong>Important:</strong><br>
+          • Respond as <strong>fast</strong> as you can<br>
+          • Mistakes are normal - just press the correct key when you see an ✕<br>
+          • Categories will switch partway through
+        </div>
+        
+        <p style="text-align: center; font-weight: 700; margin-top: 3vh; font-size: 3vh;">
+          ${IS_MOBILE ? '👇 TAP TO START 👇' : 'PRESS SPACE TO START'}
+        </p>
+      </div>
+    </div>
+  `,
+  choices: [' '],
+  on_load: function() {
+    if (IS_MOBILE) setupControls('single', 'START');
+  },
+  on_finish: function() {
+    hideControls();
+  }
+});
+
+// BLOCK 1: Modi vs Manmohan
+timeline.push(blockIntro('Practice: Categorize Leaders', 'Modi', 'Manmohan', false));
 timeline.push({
   timeline: [imgTrial('practice1', 'Modi', 'Manmohan', 'Modi', 'Manmohan')],
   timeline_variables: [
@@ -710,8 +909,8 @@ timeline.push({
   repetitions: 2
 });
 
-// BLOCK 2
-timeline.push(blockIntro('Categorize Words', 'Positive', 'Negative', false));
+// BLOCK 2: Positive vs Negative
+timeline.push(blockIntro('Practice: Categorize Words', 'Positive', 'Negative', false));
 timeline.push({
   timeline: [wordTrial('practice2', 'Positive', 'Negative', 'Positive', 'Negative')],
   timeline_variables: [
@@ -722,8 +921,8 @@ timeline.push({
   repetitions: 1
 });
 
-// BLOCK 3
-timeline.push(blockIntro('Combined', 'Modi or Positive', 'Manmohan or Negative', false));
+// BLOCK 3: Combined Practice (Compatible)
+timeline.push(blockIntro('Practice: Combined Task', 'Modi or Positive', 'Manmohan or Negative', false));
 timeline.push({
   timeline: [
     {
@@ -747,7 +946,7 @@ timeline.push({
   repetitions: 1
 });
 
-// BLOCK 4 - CRITICAL
+// BLOCK 4: CRITICAL Compatible
 timeline.push({
   timeline: [
     {
@@ -772,8 +971,8 @@ timeline.push({
   randomize_order: true
 });
 
-// BLOCK 5
-timeline.push(blockIntro('Categorize Leaders', 'Manmohan', 'Modi', true));
+// BLOCK 5: Reversed Leaders
+timeline.push(blockIntro('Practice: Switched Categories', 'Manmohan', 'Modi', true));
 timeline.push({
   timeline: [imgTrial('practice4', 'Manmohan', 'Modi', 'Manmohan', 'Modi')],
   timeline_variables: [
@@ -784,8 +983,8 @@ timeline.push({
   repetitions: 5
 });
 
-// BLOCK 6
-timeline.push(blockIntro('Combined', 'Manmohan or Positive', 'Modi or Negative', false));
+// BLOCK 6: Combined Practice (Incompatible)
+timeline.push(blockIntro('Practice: Combined Task', 'Manmohan or Positive', 'Modi or Negative', false));
 timeline.push({
   timeline: [
     {
@@ -809,7 +1008,7 @@ timeline.push({
   repetitions: 1
 });
 
-// BLOCK 7 - CRITICAL
+// BLOCK 7: CRITICAL Incompatible
 timeline.push({
   timeline: [
     {
@@ -834,26 +1033,162 @@ timeline.push({
   randomize_order: true
 });
 
+// POST-TEST QUESTIONS
 timeline.push({
   type: jsPsychHtmlKeyboardResponse,
   stimulus: `
     <div class="container">
       <div class="box">
-        <h1>Almost Done!</h1>
-        <p>You completed all trials.</p>
-        <div class="success">
-          The IAT measures automatic associations by comparing response times.
-        </div>
+        <h1>Part 3: Follow-up Questions</h1>
+        <p>You're almost done! Just a few more questions.</p>
         <p style="text-align: center; font-weight: 700; margin-top: 3vh; font-size: 3vh;">
-          ${IS_MOBILE ? '👇 TAP FOR RESULTS 👇' : 'PRESS ANY KEY'}
+          ${IS_MOBILE ? '👇 TAP CONTINUE 👇' : 'PRESS ANY KEY'}
         </p>
       </div>
     </div>
   `,
   on_load: function() {
-    if (IS_MOBILE) setupControls('single', 'VIEW RESULTS');
+    if (IS_MOBILE) setupControls('single', 'CONTINUE');
   },
   on_finish: function() {
+    hideControls();
+  }
+});
+
+timeline.push({
+  type: jsPsychSurveyMultiChoice,
+  questions: [
+    {
+      prompt: "Which statement best describes your feelings toward Narendra Modi?",
+      name: 'preference_modi',
+      options: [
+        'I strongly prefer Modi over Manmohan Singh',
+        'I moderately prefer Modi over Manmohan Singh',
+        'I slightly prefer Modi over Manmohan Singh',
+        'I like Modi and Manmohan Singh equally',
+        'I slightly prefer Manmohan Singh over Modi',
+        'I moderately prefer Manmohan Singh over Modi',
+        'I strongly prefer Manmohan Singh over Modi'
+      ],
+      required: true
+    }
+  ],
+  data: {phase: 'post_test'},
+  on_load: function() {
+    hideControls();
+  }
+});
+
+timeline.push({
+  type: jsPsychSurveyMultiChoice,
+  questions: [
+    {
+      prompt: "Which statement best describes your feelings toward Dr. Manmohan Singh?",
+      name: 'preference_manmohan',
+      options: [
+        'I strongly prefer Manmohan Singh over Modi',
+        'I moderately prefer Manmohan Singh over Modi',
+        'I slightly prefer Manmohan Singh over Modi',
+        'I like Manmohan Singh and Modi equally',
+        'I slightly prefer Modi over Manmohan Singh',
+        'I moderately prefer Modi over Manmohan Singh',
+        'I strongly prefer Modi over Manmohan Singh'
+      ],
+      required: true
+    }
+  ],
+  data: {phase: 'post_test'},
+  on_load: function() {
+    hideControls();
+  }
+});
+
+timeline.push({
+  type: jsPsychSurveyLikert,
+  questions: [
+    {
+      prompt: "How would you rate Narendra Modi? (0 = Very unfavorable, 10 = Very favorable)",
+      name: 'thermo_modi',
+      labels: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+      required: true
+    }
+  ],
+  data: {phase: 'post_test'},
+  on_load: function() {
+    hideControls();
+  }
+});
+
+timeline.push({
+  type: jsPsychSurveyLikert,
+  questions: [
+    {
+      prompt: "How would you rate Dr. Manmohan Singh? (0 = Very unfavorable, 10 = Very favorable)",
+      name: 'thermo_manmohan',
+      labels: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+      required: true
+    }
+  ],
+  data: {phase: 'post_test'},
+  on_load: function() {
+    hideControls();
+  }
+});
+
+timeline.push({
+  type: jsPsychSurveyMultiChoice,
+  questions: [
+    {
+      prompt: "Before this study, how aware were you that you might have automatic preferences between these political figures?",
+      name: 'awareness',
+      options: [
+        'Very aware',
+        'Somewhat aware',
+        'A little aware',
+        'Not at all aware'
+      ],
+      required: true
+    }
+  ],
+  data: {phase: 'post_test'},
+  on_load: function() {
+    hideControls();
+  }
+});
+
+timeline.push({
+  type: jsPsychSurveyMultiChoice,
+  questions: [
+    {
+      prompt: "Did you vote in the 2024 Lok Sabha elections?",
+      name: 'voted',
+      options: [
+        'Yes',
+        'No',
+        'Prefer not to say'
+      ],
+      required: true
+    }
+  ],
+  data: {phase: 'post_test'},
+  on_load: function() {
+    hideControls();
+  }
+});
+
+timeline.push({
+  type: jsPsychHtmlKeyboardResponse,
+  stimulus: `
+    <div class="container">
+      <div class="box">
+        <h1>Processing Your Results...</h1>
+        <p style="text-align: center; font-size: 3vh;">Please wait a moment.</p>
+      </div>
+    </div>
+  `,
+  trial_duration: 2000,
+  response_ends_trial: false,
+  on_load: function() {
     hideControls();
   }
 });

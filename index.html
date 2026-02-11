@@ -4,448 +4,278 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <title>Implicit Association Test</title>
+  <title>IAT Study</title>
 
   <script src="https://unpkg.com/jspsych@7.3.4"></script>
   <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.1.3"></script>
-  <script src="https://unpkg.com/@jspsych/plugin-image-keyboard-response@1.1.3"></script>
   <script src="https://unpkg.com/@jspsych/plugin-iat-image@1.1.3"></script>
   <script src="https://unpkg.com/@jspsych/plugin-iat-html@1.1.3"></script>
   <link href="https://unpkg.com/jspsych@7.3.4/css/jspsych.css" rel="stylesheet" />
-  
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
+      -webkit-tap-highlight-color: rgba(0,0,0,0.1);
     }
     
     html, body {
       width: 100%;
-      min-height: 100vh;
-      background: #fafafa;
-      font-family: 'Inter', -apple-system, sans-serif;
-      color: #18181b;
+      height: 100%;
+      background: #f5f5f5;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      color: #1a1a1a;
       font-size: 16px;
-      line-height: 1.5;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
-      position: relative;
+      -webkit-text-size-adjust: 100%;
+      touch-action: manipulation;
     }
     
     body {
-      padding-bottom: env(safe-area-inset-bottom);
+      padding-bottom: 120px;
+      padding-bottom: calc(120px + env(safe-area-inset-bottom));
     }
     
-    .jspsych-display-element {
-      width: 100%;
-      min-height: 100vh;
-    }
-    
-    .jspsych-content {
-      max-width: 100% !important;
-      margin: 0 auto !important;
-    }
-    
-    .jspsych-content-wrapper {
-      min-height: calc(100vh - 160px);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 20px 0;
-    }
-    
-    .container {
-      max-width: 680px;
+    .page {
+      max-width: 600px;
       margin: 0 auto;
-      padding: 40px 24px 160px;
+      padding: 30px 20px;
+    }
+    
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 30px 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
     }
     
     h1 {
-      font-size: 28px;
-      font-weight: 600;
-      letter-spacing: -0.02em;
-      margin-bottom: 8px;
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #1a1a1a;
     }
     
     h2 {
       font-size: 20px;
       font-weight: 600;
-      letter-spacing: -0.01em;
-      margin-bottom: 16px;
+      margin: 24px 0 12px;
+      color: #1a1a1a;
     }
     
     p {
-      font-size: 15px;
+      font-size: 16px;
       line-height: 1.6;
-      color: #3f3f46;
+      color: #4a4a4a;
       margin-bottom: 12px;
     }
     
-    ul {
-      list-style: none;
-      padding: 0;
-      margin: 16px 0;
-    }
-    
-    li {
-      font-size: 15px;
-      line-height: 1.6;
-      color: #3f3f46;
-      padding-left: 20px;
-      margin-bottom: 8px;
-      position: relative;
-    }
-    
-    li::before {
-      content: '•';
-      position: absolute;
-      left: 4px;
-      color: #a1a1aa;
-    }
-    
-    .card {
-      background: white;
-      border: 1px solid #e4e4e7;
-      border-radius: 8px;
-      padding: 32px;
-      margin-bottom: 16px;
-    }
-    
-    .card-title {
-      font-size: 14px;
-      font-weight: 500;
+    .label {
+      font-size: 12px;
+      font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: #71717a;
-      margin-bottom: 12px;
+      letter-spacing: 0.5px;
+      color: #888;
+      margin-bottom: 8px;
     }
     
-    .section {
-      margin-bottom: 32px;
-    }
-    
-    .section:last-child {
-      margin-bottom: 0;
-    }
-    
-    .categories {
+    .cats {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin: 24px 0;
+      gap: 12px;
+      margin: 20px 0;
     }
     
-    .category {
-      background: white;
-      border: 2px solid #18181b;
-      border-radius: 6px;
-      padding: 20px;
+    .cat {
+      background: #1a1a1a;
+      color: white;
+      border-radius: 8px;
+      padding: 20px 16px;
       text-align: center;
-      transition: transform 0.1s;
     }
     
-    .category:active {
-      transform: scale(0.98);
-    }
-    
-    .category-key {
+    .cat-key {
       font-size: 11px;
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #71717a;
-      margin-bottom: 8px;
+      opacity: 0.7;
+      margin-bottom: 6px;
     }
     
-    .category-label {
-      font-size: 16px;
-      font-weight: 500;
-    }
-    
-    .info {
-      background: #f4f4f5;
-      border-left: 3px solid #18181b;
-      padding: 16px 20px;
-      margin: 24px 0;
-      border-radius: 4px;
-    }
-    
-    .info.warning {
-      background: #fef3c7;
-      border-left-color: #d97706;
-    }
-    
-    .info.success {
-      background: #d1fae5;
-      border-left-color: #059669;
-    }
-    
-    .info p {
-      margin-bottom: 8px;
-    }
-    
-    .info p:last-child {
-      margin-bottom: 0;
-    }
-    
-    .btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #18181b;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      padding: 12px 24px;
+    .cat-label {
       font-size: 15px;
-      font-weight: 500;
-      font-family: 'Inter', sans-serif;
-      cursor: pointer;
-      transition: background 0.15s;
-      width: 100%;
-      max-width: 320px;
-      margin: 24px auto 0;
+      font-weight: 600;
     }
     
-    .btn:hover {
-      background: #27272a;
+    .alert {
+      background: #fff3cd;
+      border: 1px solid #ffc107;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 20px 0;
     }
     
-    .btn:active {
-      background: #3f3f46;
+    .alert p {
+      color: #856404;
+      margin: 0;
     }
     
-    .btn:disabled {
-      background: #d4d4d8;
-      cursor: not-allowed;
+    .success {
+      background: #d4edda;
+      border-color: #28a745;
     }
     
-    #touch-controls {
+    .success p {
+      color: #155724;
+    }
+    
+    /* MOBILE CONTROLS */
+    #mobile-controls {
       position: fixed;
       bottom: 0;
       left: 0;
       right: 0;
       background: white;
-      border-top: 1px solid #e4e4e7;
+      border-top: 2px solid #e0e0e0;
       padding: 12px;
       padding-bottom: calc(12px + env(safe-area-inset-bottom));
-      display: flex;
-      gap: 12px;
-      z-index: 10000;
-      box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+      display: none;
+      gap: 10px;
+      z-index: 999999;
+      box-shadow: 0 -4px 12px rgba(0,0,0,0.1);
     }
     
-    .touch-btn {
+    #mobile-controls.show {
+      display: flex;
+    }
+    
+    .mob-btn {
       flex: 1;
-      background: #18181b;
+      background: #1a1a1a;
       border: none;
-      border-radius: 8px;
-      padding: 18px 12px;
-      font-family: 'Inter', sans-serif;
-      font-size: 14px;
-      font-weight: 500;
+      border-radius: 10px;
+      padding: 20px 12px;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
       color: white;
       cursor: pointer;
-      transition: all 0.1s;
-      -webkit-user-select: none;
-      user-select: none;
       touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
     }
     
-    .touch-btn:active {
-      background: #27272a;
-      transform: scale(0.98);
+    .mob-btn:active {
+      background: #333;
+      transform: scale(0.97);
     }
     
-    .touch-btn-key {
+    .mob-btn-key {
       display: block;
-      font-size: 22px;
-      font-weight: 600;
+      font-size: 24px;
+      font-weight: 700;
       margin-bottom: 4px;
     }
     
-    .touch-btn-label {
+    .mob-btn-text {
       display: block;
       font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      opacity: 0.9;
+      opacity: 0.8;
     }
     
+    /* TRIAL DISPLAY */
     .jspsych-iat-stim {
-      font-size: 42px !important;
-      font-weight: 500 !important;
-      letter-spacing: -0.02em !important;
-      color: #18181b !important;
-      margin: 40px auto !important;
-      max-width: 90vw !important;
-      word-wrap: break-word !important;
+      font-size: 40px !important;
+      font-weight: 600 !important;
+      color: #1a1a1a !important;
+      margin: 60px auto !important;
+      padding: 0 20px !important;
+      text-align: center !important;
     }
     
     .jspsych-iat-stim img {
-      max-width: 85vw !important;
-      max-height: 45vh !important;
+      max-width: 80vw !important;
+      max-height: 40vh !important;
       height: auto !important;
       width: auto !important;
       border-radius: 8px;
-      border: 1px solid #e4e4e7;
-      object-fit: contain;
-      background: white;
       display: block !important;
       margin: 0 auto !important;
     }
     
     .error-mark {
-      color: #dc2626 !important;
-      font-size: 72px !important;
-      display: block !important;
-      margin: 20px 0 !important;
+      color: #dc3545 !important;
+      font-size: 60px !important;
     }
     
     .jspsych-iat-category {
-      font-family: 'Inter', sans-serif !important;
-      font-weight: 500 !important;
+      font-family: inherit !important;
+      font-weight: 600 !important;
       font-size: 13px !important;
-      padding: 8px 16px !important;
-      border: 1px solid #d4d4d8 !important;
+      padding: 10px 16px !important;
+      border: 2px solid #1a1a1a !important;
       border-radius: 6px !important;
       margin: 8px !important;
       background: white !important;
-      display: inline-block !important;
     }
     
     .jspsych-display-element > p {
-      font-family: 'Inter', sans-serif !important;
-      font-size: 12px !important;
-      font-weight: 500 !important;
-      color: #71717a !important;
-      margin-top: 32px !important;
-      padding: 0 16px !important;
+      font-size: 13px !important;
+      color: #666 !important;
+      margin-top: 40px !important;
+      padding: 0 20px 100px !important;
       text-align: center !important;
     }
     
-    #jspsych-data-display {
-      background: white;
-      border: 1px solid #e4e4e7;
+    /* RESULTS */
+    .result-box {
+      background: #f8f9fa;
       border-radius: 8px;
-      padding: 32px;
-      max-width: 720px;
-      margin: 40px auto 160px;
-    }
-    
-    .data-title {
-      font-size: 24px;
-      font-weight: 600;
-      letter-spacing: -0.02em;
-      margin-bottom: 24px;
-    }
-    
-    .data-summary {
-      background: #fafafa;
-      border: 1px solid #e4e4e7;
-      border-radius: 6px;
       padding: 20px;
-      margin-bottom: 24px;
-      font-size: 14px;
-      line-height: 1.8;
+      margin: 20px 0;
     }
     
-    .data-summary p {
-      margin: 6px 0;
-      color: #3f3f46;
-      font-size: 14px;
+    .result-box p {
+      margin: 8px 0;
+      font-size: 15px;
     }
     
-    .data-divider {
-      border-top: 1px solid #e4e4e7;
-      margin: 12px 0;
-      padding-top: 12px;
+    .result-box strong {
+      color: #1a1a1a;
     }
     
-    .btn-group {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 24px;
-      flex-wrap: wrap;
+    .divider {
+      height: 1px;
+      background: #e0e0e0;
+      margin: 16px 0;
     }
     
-    .download-btn {
-      background: #18181b;
+    .btn {
+      width: 100%;
+      background: #1a1a1a;
       color: white;
       border: none;
-      border-radius: 6px;
-      padding: 12px 20px;
-      font-size: 14px;
-      font-weight: 500;
-      font-family: 'Inter', sans-serif;
-      cursor: pointer;
-      transition: background 0.15s;
-      flex: 1;
-      min-width: 140px;
-    }
-    
-    .download-btn:hover {
-      background: #27272a;
-    }
-    
-    .download-btn:active {
-      background: #3f3f46;
-    }
-    
-    .download-btn:disabled {
-      background: #d4d4d8;
-      cursor: not-allowed;
-    }
-    
-    .data-csv {
-      max-height: 400px;
-      overflow-y: auto;
-      background: #fafafa;
-      border: 1px solid #e4e4e7;
-      border-radius: 6px;
+      border-radius: 8px;
       padding: 16px;
-      margin-top: 16px;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 10px 0;
+      touch-action: manipulation;
     }
     
-    .data-csv pre {
-      margin: 0;
-      font-family: monospace;
-      font-size: 11px;
-      line-height: 1.6;
-      white-space: pre-wrap;
-      word-wrap: break-word;
-      color: #3f3f46;
+    .btn:active {
+      background: #333;
     }
     
-    .loading {
-      text-align: center;
-      padding: 20px;
-      color: #71717a;
-    }
-    
-    .spinner {
-      border: 3px solid #e4e4e7;
-      border-top: 3px solid #18181b;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      animation: spin 1s linear infinite;
-      margin: 0 auto 16px;
-    }
-    
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    
-    @media (max-width: 640px) {
-      .container {
-        padding: 24px 16px 160px;
+    @media (max-width: 600px) {
+      .page {
+        padding: 20px 16px;
       }
       
       .card {
@@ -453,255 +283,218 @@
       }
       
       h1 {
-        font-size: 24px;
-      }
-      
-      h2 {
-        font-size: 18px;
-      }
-      
-      .touch-btn {
-        padding: 16px 10px;
+        font-size: 22px;
       }
       
       .jspsych-iat-stim {
         font-size: 36px !important;
-      }
-      
-      .categories {
-        gap: 12px;
-      }
-      
-      .category {
-        padding: 16px 12px;
-      }
-      
-      .category-label {
-        font-size: 14px;
-      }
-      
-      #jspsych-data-display {
-        padding: 24px 20px;
-        margin: 24px 16px 160px;
-      }
-    }
-    
-    @media (max-height: 600px) {
-      .jspsych-iat-stim img {
-        max-height: 35vh !important;
+        margin: 40px auto !important;
       }
     }
   </style>
 </head>
 
-<body></body>
+<body>
+  <div id="jspsych-target"></div>
+  <div id="mobile-controls"></div>
+</body>
 
 <script>
 // ============================================
-// CONFIGURATION - UPDATE THESE
+// CONFIGURATION
 // ============================================
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || window.innerWidth <= 768;
+const participantId = 'P' + Date.now();
+let globalData = null;
 
-// OPTION 1: Use Google Forms (Recommended)
-// Instructions to set up:
-// 1. Create a Google Form with these fields: participant_id, device_type, d_score, interpretation, accuracy, mean_rt, timestamp, csv_data
-// 2. Get the form's pre-filled link
-// 3. Replace the entry IDs below with your form's entry IDs
-const USE_GOOGLE_FORMS = true;
-const GOOGLE_FORM_ACTION = 'https://docs.google.com/forms/d/e/YOUR_FORM_ID/formResponse';
-const FORM_FIELDS = {
-  participant_id: 'entry.YOUR_ID_1',
-  device_type: 'entry.YOUR_ID_2',
-  d_score: 'entry.YOUR_ID_3',
-  interpretation: 'entry.YOUR_ID_4',
-  accuracy: 'entry.YOUR_ID_5',
-  mean_rt: 'entry.YOUR_ID_6',
-  timestamp: 'entry.YOUR_ID_7',
-  csv_data: 'entry.YOUR_ID_8'
-};
-
-// OPTION 2: Email collection (fallback)
-const RESEARCHER_EMAIL = 'your.email@example.com';
+console.log('🎯 IAT Started');
+console.log('📱 Device:', isMobile ? 'Mobile' : 'Desktop');
+console.log('🆔 ID:', participantId);
 
 // ============================================
-// MOBILE DETECTION
+// IMAGES & WORDS
 // ============================================
-const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
-const participantId = `P${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
-console.log('IAT Started - Participant:', participantId, '- Device:', isMobile ? 'Mobile' : 'Desktop');
-
-// ============================================
-// IMAGE PATHS
-// ============================================
-const MODI_IMAGES = [
+const MODI = [
   'imagesmodi1.jpg.jpeg',
   'imagesmodi2.jpg.jpeg',
   'imagesmodi3.jpg.jpeg',
   'imagesmodi4.jpg.jpeg'
 ];
 
-const MANMOHAN_IMAGES = [
+const MANMOHAN = [
   'imagesprevious1.jpg.jpeg',
   'imagesprevious2.jpg.jpeg',
   'imagesprevious3.jpg.jpeg',
   'imagesprevious4.jpg.jpeg'
 ];
 
-// ============================================
-// WORDS
-// ============================================
-const POSITIVE_WORDS = [
-  'Wonderful', 'Happy', 'Joy', 'Love', 'Peace', 
-  'Pleasure', 'Glorious', 'Laughter', 'Success', 'Hope'
-];
-
-const NEGATIVE_WORDS = [
-  'Terrible', 'Awful', 'Horrible', 'Evil', 'Nasty', 
-  'Failure', 'Agony', 'Pain', 'Disaster', 'Tragedy'
-];
+const POSITIVE = ['Wonderful', 'Happy', 'Joy', 'Love', 'Peace', 'Pleasure', 'Glorious', 'Laughter', 'Success', 'Hope'];
+const NEGATIVE = ['Terrible', 'Awful', 'Horrible', 'Evil', 'Nasty', 'Failure', 'Agony', 'Pain', 'Disaster', 'Tragedy'];
 
 // ============================================
-// DATA SUBMISSION
+// MOBILE CONTROLS
 // ============================================
-async function submitToGoogleForms(data) {
-  const formData = new FormData();
-  formData.append(FORM_FIELDS.participant_id, data.participant_id);
-  formData.append(FORM_FIELDS.device_type, data.device_type);
-  formData.append(FORM_FIELDS.d_score, data.d_score);
-  formData.append(FORM_FIELDS.interpretation, data.interpretation);
-  formData.append(FORM_FIELDS.accuracy, data.accuracy);
-  formData.append(FORM_FIELDS.mean_rt, data.mean_rt);
-  formData.append(FORM_FIELDS.timestamp, data.timestamp);
-  formData.append(FORM_FIELDS.csv_data, data.csv_data);
+function showControls(type, labels) {
+  const controls = document.getElementById('mobile-controls');
+  if (!controls || !isMobile) return;
   
-  try {
-    await fetch(GOOGLE_FORM_ACTION, {
-      method: 'POST',
-      mode: 'no-cors',
-      body: formData
-    });
-    return true;
-  } catch (error) {
-    console.error('Error submitting to Google Forms:', error);
-    return false;
+  controls.innerHTML = '';
+  controls.className = 'show';
+  
+  if (type === 'continue') {
+    const btn = document.createElement('button');
+    btn.className = 'mob-btn';
+    btn.innerHTML = `<span class="mob-btn-key">TAP</span><span class="mob-btn-text">${labels}</span>`;
+    btn.onclick = () => triggerKey(' ');
+    controls.appendChild(btn);
+  } else {
+    const btnE = document.createElement('button');
+    btnE.className = 'mob-btn';
+    btnE.innerHTML = `<span class="mob-btn-key">E</span><span class="mob-btn-text">${labels.left}</span>`;
+    btnE.onclick = () => triggerKey('e');
+    
+    const btnI = document.createElement('button');
+    btnI.className = 'mob-btn';
+    btnI.innerHTML = `<span class="mob-btn-key">I</span><span class="mob-btn-text">${labels.right}</span>`;
+    btnI.onclick = () => triggerKey('i');
+    
+    controls.appendChild(btnE);
+    controls.appendChild(btnI);
   }
 }
 
-function createEmailLink(data) {
-  const subject = encodeURIComponent(`IAT Data - ${data.participant_id}`);
-  const body = encodeURIComponent(`
-Participant ID: ${data.participant_id}
-Device: ${data.device_type}
-Timestamp: ${data.timestamp}
-
-D-Score: ${data.d_score}
-Interpretation: ${data.interpretation}
-Accuracy: ${data.accuracy}%
-Mean RT: ${data.mean_rt}ms
-
-CSV Data:
-${data.csv_data}
-  `.trim());
-  
-  return `mailto:${RESEARCHER_EMAIL}?subject=${subject}&body=${body}`;
+function hideControls() {
+  const controls = document.getElementById('mobile-controls');
+  if (controls) {
+    controls.className = '';
+    controls.innerHTML = '';
+  }
 }
 
-// ============================================
-// TOUCH CONTROLS
-// ============================================
-function simulateKey(key) {
+function triggerKey(key) {
   const keyMap = {
-    'e': { code: 'KeyE', keyCode: 69 },
-    'i': { code: 'KeyI', keyCode: 73 },
-    ' ': { code: 'Space', keyCode: 32 }
+    'e': {keyCode: 69, code: 'KeyE'},
+    'i': {keyCode: 73, code: 'KeyI'},
+    ' ': {keyCode: 32, code: 'Space'}
   };
   
   const info = keyMap[key];
   
   const down = new KeyboardEvent('keydown', {
     key: key,
-    code: info.code,
     keyCode: info.keyCode,
+    code: info.code,
     which: info.keyCode,
     bubbles: true,
     cancelable: true
   });
+  
   document.dispatchEvent(down);
   
   setTimeout(() => {
     const up = new KeyboardEvent('keyup', {
       key: key,
-      code: info.code,
       keyCode: info.keyCode,
+      code: info.code,
       which: info.keyCode,
       bubbles: true,
       cancelable: true
     });
     document.dispatchEvent(up);
-  }, 100);
-}
-
-function addTouchControls(type, labels) {
-  removeTouchControls();
-  
-  const div = document.createElement('div');
-  div.id = 'touch-controls';
-  
-  if (type === 'continue') {
-    const btn = document.createElement('button');
-    btn.className = 'touch-btn';
-    btn.innerHTML = `<span class="touch-btn-key">Continue</span><span class="touch-btn-label">${labels.label || 'TAP TO CONTINUE'}</span>`;
-    btn.addEventListener('click', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      simulateKey(' ');
-    }, { passive: false });
-    div.appendChild(btn);
-  } else {
-    const leftBtn = document.createElement('button');
-    leftBtn.className = 'touch-btn';
-    leftBtn.innerHTML = `<span class="touch-btn-key">E</span><span class="touch-btn-label">${labels.left}</span>`;
-    leftBtn.addEventListener('click', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      simulateKey('e');
-    }, { passive: false });
-    
-    const rightBtn = document.createElement('button');
-    rightBtn.className = 'touch-btn';
-    rightBtn.innerHTML = `<span class="touch-btn-key">I</span><span class="touch-btn-label">${labels.right}</span>`;
-    rightBtn.addEventListener('click', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      simulateKey('i');
-    }, { passive: false });
-    
-    div.appendChild(leftBtn);
-    div.appendChild(rightBtn);
-  }
-  
-  document.body.appendChild(div);
-}
-
-function removeTouchControls() {
-  const existing = document.getElementById('touch-controls');
-  if (existing) {
-    existing.remove();
-  }
+  }, 50);
 }
 
 // ============================================
-// JSPSYCH INIT
+// DOWNLOAD FUNCTIONS
+// ============================================
+function downloadCSV() {
+  if (!globalData) {
+    alert('No data available');
+    return;
+  }
+  const blob = new Blob([globalData.csv], {type: 'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `IAT_${globalData.id}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  alert('✅ CSV downloaded! Send this file to the researcher.');
+}
+
+function downloadSummary() {
+  if (!globalData) {
+    alert('No data available');
+    return;
+  }
+  const summary = `IAT RESULTS
+============
+
+Participant: ${globalData.id}
+Date: ${globalData.date}
+Device: ${globalData.device}
+
+D-Score: ${globalData.dScore}
+Result: ${globalData.result}
+Accuracy: ${globalData.accuracy}
+Mean RT: ${globalData.meanRT}
+Total Trials: ${globalData.total}
+`;
+  
+  const blob = new Blob([summary], {type: 'text/plain'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `IAT_Summary_${globalData.id}.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
+  alert('✅ Summary downloaded!');
+}
+
+function copyData() {
+  if (!globalData) {
+    alert('No data available');
+    return;
+  }
+  const text = `IAT Results - ${globalData.id}
+Date: ${globalData.date}
+D-Score: ${globalData.dScore}
+Result: ${globalData.result}
+Accuracy: ${globalData.accuracy}
+Mean RT: ${globalData.meanRT}`;
+  
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => {
+      alert('✅ Copied! Paste in WhatsApp/Email.');
+    }).catch(() => {
+      prompt('Copy this:', text);
+    });
+  } else {
+    prompt('Copy this:', text);
+  }
+}
+
+function shareWhatsApp() {
+  if (!globalData) return;
+  const text = `IAT Results%0A%0AID: ${globalData.id}%0ADate: ${globalData.date}%0AD-Score: ${globalData.dScore}%0AResult: ${globalData.result}%0AAccuracy: ${globalData.accuracy}%0AMean RT: ${globalData.meanRT}`;
+  window.open(`https://wa.me/?text=${text}`, '_blank');
+}
+
+// ============================================
+// JSPSYCH
 // ============================================
 const jsPsych = initJsPsych({
-  on_finish: async function() {
-    removeTouchControls();
+  display_element: 'jspsych-target',
+  on_finish: function() {
+    hideControls();
+    
+    console.log('📊 Processing data...');
     
     const allData = jsPsych.data.get();
     const iatData = allData.filter({trial_type: 'iat-image'}).union(allData.filter({trial_type: 'iat-html'}));
     
-    const compat = iatData.filter({block: 'compatible', critical_trial: true});
-    const incompat = iatData.filter({block: 'incompatible', critical_trial: true});
+    const compat = iatData.filter({block: 'compatible', critical: true});
+    const incompat = iatData.filter({block: 'incompatible', critical: true});
     
     const compatMean = compat.select('rt').mean();
     const incompatMean = incompat.select('rt').mean();
@@ -716,254 +509,180 @@ const jsPsych = initJsPsych({
     const accuracy = (correct / total * 100).toFixed(1);
     const meanRT = iatData.select('rt').mean().toFixed(0);
     
-    let interp = '';
-    if (Math.abs(dScore) < 0.15) {
-      interp = 'No clear preference';
-    } else if (dScore > 0.65) {
-      interp = 'Strong Modi-Positive preference';
-    } else if (dScore > 0.35) {
-      interp = 'Moderate Modi-Positive preference';
-    } else if (dScore > 0) {
-      interp = 'Slight Modi-Positive preference';
-    } else if (dScore < -0.65) {
-      interp = 'Strong Manmohan-Positive preference';
-    } else if (dScore < -0.35) {
-      interp = 'Moderate Manmohan-Positive preference';
-    } else {
-      interp = 'Slight Manmohan-Positive preference';
-    }
+    let result = '';
+    if (Math.abs(dScore) < 0.15) result = 'No clear preference';
+    else if (dScore > 0.65) result = 'Strong Modi-Positive';
+    else if (dScore > 0.35) result = 'Moderate Modi-Positive';
+    else if (dScore > 0) result = 'Slight Modi-Positive';
+    else if (dScore < -0.65) result = 'Strong Manmohan-Positive';
+    else if (dScore < -0.35) result = 'Moderate Manmohan-Positive';
+    else result = 'Slight Manmohan-Positive';
     
     const csv = iatData.csv();
-    const timestamp = new Date().toISOString();
     
-    const submissionData = {
-      participant_id: participantId,
-      device_type: isMobile ? 'mobile' : 'desktop',
-      d_score: dScore.toFixed(3),
-      interpretation: interp,
-      accuracy: accuracy,
-      mean_rt: meanRT,
-      timestamp: timestamp,
-      csv_data: csv
+    globalData = {
+      id: participantId,
+      device: isMobile ? 'mobile' : 'desktop',
+      date: new Date().toLocaleString(),
+      dScore: dScore.toFixed(3),
+      result: result,
+      accuracy: accuracy + '%',
+      meanRT: meanRT + 'ms',
+      total: total,
+      csv: csv
     };
     
-    // Show loading
-    document.querySelector('#jspsych-data-display').innerHTML = `
-      <div class="loading">
-        <div class="spinner"></div>
-        <p>Submitting your data...</p>
-      </div>
-    `;
+    console.log('✅ Data ready:', globalData);
     
-    // Try to submit
-    let submitted = false;
-    if (USE_GOOGLE_FORMS) {
-      submitted = await submitToGoogleForms(submissionData);
-    }
-    
-    // Show results
-    window.experimentData = csv;
-    window.submissionData = submissionData;
-    
-    document.querySelector('#jspsych-data-display').innerHTML = `
-      <h2 class="data-title">Experiment Complete</h2>
-      ${submitted ? '<div class="info success"><p><strong>✓ Data submitted successfully!</strong></p></div>' : '<div class="info warning"><p><strong>Note:</strong> Automatic submission failed. Please download your data.</p></div>'}
-      <div class="data-summary">
-        <p><strong>Participant ID:</strong> ${participantId}</p>
-        <p><strong>Date:</strong> ${new Date().toLocaleString()}</p>
-        <p><strong>Device:</strong> ${isMobile ? 'Mobile' : 'Desktop'}</p>
-        <div class="data-divider"></div>
-        <p><strong>Total Trials:</strong> ${total}</p>
-        <p><strong>Accuracy:</strong> ${accuracy}%</p>
-        <p><strong>Mean Response Time:</strong> ${meanRT}ms</p>
-        <div class="data-divider"></div>
-        <p><strong>D-Score:</strong> ${dScore.toFixed(3)}</p>
-        <p><strong>Result:</strong> ${interp}</p>
+    // Display results
+    document.getElementById('jspsych-target').innerHTML = `
+      <div class="page">
+        <div class="card">
+          <h1>✅ Experiment Complete!</h1>
+          <p>Thank you for participating.</p>
+          
+          <div class="result-box">
+            <p><strong>Participant ID:</strong> ${globalData.id}</p>
+            <p><strong>Date:</strong> ${globalData.date}</p>
+            <p><strong>Device:</strong> ${globalData.device}</p>
+            <div class="divider"></div>
+            <p><strong>Trials:</strong> ${globalData.total}</p>
+            <p><strong>Accuracy:</strong> ${globalData.accuracy}</p>
+            <p><strong>Avg RT:</strong> ${globalData.meanRT}</p>
+            <div class="divider"></div>
+            <p><strong>D-Score:</strong> ${globalData.dScore}</p>
+            <p><strong>Result:</strong> ${globalData.result}</p>
+          </div>
+          
+          <div class="alert">
+            <p><strong>📤 Send your data to the researcher!</strong></p>
+          </div>
+          
+          <button class="btn" onclick="downloadCSV()">📥 Download CSV Data</button>
+          <button class="btn" onclick="downloadSummary()">📄 Download Summary</button>
+          <button class="btn" onclick="copyData()">📋 Copy to Clipboard</button>
+          <button class="btn" onclick="shareWhatsApp()">💬 Share via WhatsApp</button>
+        </div>
       </div>
-      <div class="btn-group">
-        <button class="download-btn" onclick="downloadData()">Download CSV</button>
-        <button class="download-btn" onclick="downloadSummary()">Download Summary</button>
-        ${!submitted ? `<button class="download-btn" onclick="emailData()">Email Data</button>` : ''}
-      </div>
-      <details>
-        <summary style="cursor: pointer; padding: 12px 0; font-weight: 500;">View Raw Data</summary>
-        <div class="data-csv"><pre>${csv}</pre></div>
-      </details>
     `;
   },
   on_data_update: function(data) {
     data.participant_id = participantId;
-    data.device_type = isMobile ? 'mobile' : 'desktop';
-    data.timestamp = new Date().toISOString();
+    data.device = isMobile ? 'mobile' : 'desktop';
   }
 });
-
-function downloadData() {
-  const blob = new Blob([window.experimentData], { type: 'text/csv' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `IAT_Data_${participantId}.csv`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
-
-function downloadSummary() {
-  const data = window.submissionData;
-  const summary = `IAT Experiment Summary
-=======================
-
-Participant ID: ${data.participant_id}
-Device Type: ${data.device_type}
-Timestamp: ${data.timestamp}
-
-Results:
---------
-D-Score: ${data.d_score}
-Interpretation: ${data.interpretation}
-Accuracy: ${data.accuracy}%
-Mean Response Time: ${data.mean_rt}ms
-
-Note: This is a summary. Full trial data is in the CSV file.
-`;
-  
-  const blob = new Blob([summary], { type: 'text/plain' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `IAT_Summary_${participantId}.txt`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
-
-function emailData() {
-  window.location.href = createEmailLink(window.submissionData);
-}
 
 // ============================================
 // TIMELINE
 // ============================================
 const timeline = [];
 
-// WELCOME
+// Welcome
 timeline.push({
   type: jsPsychHtmlKeyboardResponse,
   stimulus: `
-    <div class="container">
+    <div class="page">
       <div class="card">
-        <div class="card-title">Research Study</div>
+        <div class="label">Research Study</div>
         <h1>Implicit Association Test</h1>
-        <p>This study measures automatic associations between political figures and evaluative concepts.</p>
-        <div class="section">
-          <h2>What to Expect</h2>
-          <p>You will categorize images and words as quickly as possible. The task takes approximately 5-7 minutes.</p>
+        <p>This study measures automatic associations between political figures and evaluative words.</p>
+        <h2>You will see:</h2>
+        <p>• Photos of Narendra Modi<br>
+        • Photos of Dr. Manmohan Singh<br>
+        • Positive words (wonderful, happy, etc.)<br>
+        • Negative words (terrible, awful, etc.)</p>
+        <div class="alert">
+          <p><strong>Duration:</strong> 5-7 minutes. Respond as quickly as possible!</p>
         </div>
-        <div class="info">
-          <p><strong>You will see:</strong></p>
-          <p>• Photos of Narendra Modi</p>
-          <p>• Photos of Dr. Manmohan Singh</p>
-          <p>• Positive words (wonderful, happy, etc.)</p>
-          <p>• Negative words (terrible, awful, etc.)</p>
-        </div>
-        <div class="info warning">
-          <p><strong>Important:</strong> Respond as quickly as possible while maintaining accuracy. Your first instinct is what we're measuring.</p>
-        </div>
-        <button class="btn">${isMobile ? 'Tap to Continue' : 'Press Any Key to Start'}</button>
+        <p style="text-align: center; margin-top: 30px; font-weight: 600;">
+          ${isMobile ? 'Tap CONTINUE below to start' : 'Press any key to start'}
+        </p>
       </div>
     </div>
   `,
-  on_load: function() {
-    if (isMobile) addTouchControls('continue', {label: 'START'});
+  on_load: () => {
+    if (isMobile) showControls('continue', 'START');
   },
-  on_finish: function() {
-    removeTouchControls();
-  }
+  on_finish: () => hideControls()
 });
 
-// INSTRUCTIONS
+// Instructions
 timeline.push({
   type: jsPsychHtmlKeyboardResponse,
   stimulus: `
-    <div class="container">
+    <div class="page">
       <div class="card">
-        <div class="card-title">Instructions</div>
+        <div class="label">Instructions</div>
         <h1>How to Respond</h1>
-        <div class="section">
-          <h2>Your Task</h2>
-          <p>Categorize each item using the ${isMobile ? 'buttons at the bottom of the screen' : 'E and I keys on your keyboard'}. Respond as quickly and accurately as possible.</p>
-        </div>
-        <div class="categories">
-          <div class="category">
-            <div class="category-key">${isMobile ? 'Left Button' : 'Press E'}</div>
-            <div class="category-label">Left Category</div>
+        <p>Categorize items using the ${isMobile ? 'E and I buttons at the bottom' : 'E and I keys'}.</p>
+        <div class="cats">
+          <div class="cat">
+            <div class="cat-key">${isMobile ? 'Left Button' : 'Press E'}</div>
+            <div class="cat-label">Left Category</div>
           </div>
-          <div class="category">
-            <div class="category-key">${isMobile ? 'Right Button' : 'Press I'}</div>
-            <div class="category-label">Right Category</div>
+          <div class="cat">
+            <div class="cat-key">${isMobile ? 'Right Button' : 'Press I'}</div>
+            <div class="cat-label">Right Category</div>
           </div>
         </div>
-        <div class="info warning">
-          <p><strong>If you make an error:</strong> An ✕ will appear. Quickly press the ${isMobile ? 'other button' : 'correct key'} to continue.</p>
+        <div class="alert">
+          <p><strong>If wrong:</strong> An ✕ appears. Press the ${isMobile ? 'other button' : 'correct key'}.</p>
         </div>
-        <p style="text-align: center; margin-top: 24px;">When you're ready, ${isMobile ? 'tap below' : 'press Space'} to begin.</p>
+        <p style="text-align: center; margin-top: 30px; font-weight: 600;">
+          ${isMobile ? 'Tap to begin' : 'Press Space to begin'}
+        </p>
       </div>
     </div>
   `,
   choices: [' '],
-  on_load: function() {
-    if (isMobile) addTouchControls('continue', {label: 'BEGIN'});
+  on_load: () => {
+    if (isMobile) showControls('continue', 'BEGIN');
   },
-  on_finish: function() {
-    removeTouchControls();
-  }
+  on_finish: () => hideControls()
 });
 
-// BLOCK INSTRUCTION HELPER
+// Block instruction
 function blockInstr(title, left, right, reversed) {
   return {
     type: jsPsychHtmlKeyboardResponse,
     stimulus: `
-      <div class="container">
+      <div class="page">
         <div class="card">
-          <div class="card-title">${reversed ? '⚠️ Categories Reversed' : 'Practice Block'}</div>
+          <div class="label">${reversed ? '⚠️ REVERSED' : 'Next Block'}</div>
           <h1>${title}</h1>
-          ${reversed ? '<div class="info warning"><p><strong>Attention:</strong> The categories have switched sides. Pay close attention to the labels.</p></div>' : ''}
-          <div class="categories">
-            <div class="category">
-              <div class="category-key">${isMobile ? 'Left Button' : 'Press E'}</div>
-              <div class="category-label">${left}</div>
+          ${reversed ? '<div class="alert"><p><strong>Categories switched!</strong></p></div>' : ''}
+          <div class="cats">
+            <div class="cat">
+              <div class="cat-key">${isMobile ? 'E' : 'Press E'}</div>
+              <div class="cat-label">${left}</div>
             </div>
-            <div class="category">
-              <div class="category-key">${isMobile ? 'Right Button' : 'Press I'}</div>
-              <div class="category-label">${right}</div>
+            <div class="cat">
+              <div class="cat-key">${isMobile ? 'I' : 'Press I'}</div>
+              <div class="cat-label">${right}</div>
             </div>
           </div>
-          <p style="text-align: center; margin-top: 24px;">${isMobile ? 'Tap to begin' : 'Press Space to begin'}</p>
+          <p style="text-align: center; margin-top: 30px; font-weight: 600;">
+            ${isMobile ? 'Tap to start' : 'Press Space'}
+          </p>
         </div>
       </div>
     `,
     choices: [' '],
-    on_load: function() {
-      if (isMobile) addTouchControls('continue', {label: 'START'});
+    on_load: () => {
+      if (isMobile) showControls('continue', 'START');
     },
-    on_finish: function() {
-      removeTouchControls();
-    }
+    on_finish: () => hideControls()
   };
 }
 
-// IMAGE TRIAL HELPER
+// Image trial
 function imgTrial(block, leftCat, rightCat, leftShort, rightShort, crit) {
   return {
     type: jsPsychIatImage,
     stimulus: jsPsych.timelineVariable('stimulus'),
-    stim_key_association: jsPsych.timelineVariable('stim_key_association'),
+    stim_key_association: jsPsych.timelineVariable('key'),
     html_when_wrong: '<span class="error-mark">✕</span>',
-    bottom_instructions: `<p>${isMobile ? 'Left' : 'E'} = ${leftCat} | ${isMobile ? 'Right' : 'I'} = ${rightCat}</p>`,
+    bottom_instructions: `<p>E = ${leftCat} | I = ${rightCat}</p>`,
     force_correct_key_press: true,
     display_feedback: true,
     trial_duration: 3000,
@@ -972,21 +691,21 @@ function imgTrial(block, leftCat, rightCat, leftShort, rightShort, crit) {
     left_category_label: leftCat.split('/'),
     right_category_label: rightCat.split('/'),
     response_ends_trial: true,
-    data: { block: block, item_type: 'image', critical_trial: crit || false },
-    on_load: function() {
-      if (isMobile) addTouchControls('choice', {left: leftShort, right: rightShort});
+    data: {block: block, type: 'image', critical: crit || false},
+    on_load: () => {
+      if (isMobile) showControls('choice', {left: leftShort, right: rightShort});
     }
   };
 }
 
-// WORD TRIAL HELPER
+// Word trial
 function wordTrial(block, leftCat, rightCat, leftShort, rightShort, crit) {
   return {
     type: jsPsychIatHtml,
     stimulus: jsPsych.timelineVariable('stimulus'),
-    stim_key_association: jsPsych.timelineVariable('stim_key_association'),
+    stim_key_association: jsPsych.timelineVariable('key'),
     html_when_wrong: '<span class="error-mark">✕</span>',
-    bottom_instructions: `<p>${isMobile ? 'Left' : 'E'} = ${leftCat} | ${isMobile ? 'Right' : 'I'} = ${rightCat}</p>`,
+    bottom_instructions: `<p>E = ${leftCat} | I = ${rightCat}</p>`,
     force_correct_key_press: true,
     display_feedback: true,
     trial_duration: 3000,
@@ -995,58 +714,54 @@ function wordTrial(block, leftCat, rightCat, leftShort, rightShort, crit) {
     left_category_label: leftCat.split('/'),
     right_category_label: rightCat.split('/'),
     response_ends_trial: true,
-    data: { block: block, item_type: 'word', critical_trial: crit || false },
-    on_load: function() {
-      if (isMobile) addTouchControls('choice', {left: leftShort, right: rightShort});
+    data: {block: block, type: 'word', critical: crit || false},
+    on_load: () => {
+      if (isMobile) showControls('choice', {left: leftShort, right: rightShort});
     }
   };
 }
 
-// ============================================
-// EXPERIMENT BLOCKS
-// ============================================
-
-// BLOCK 1: Political Figures Practice
-timeline.push(blockInstr('Categorize Political Figures', 'Modi', 'Manmohan', false));
+// BLOCK 1
+timeline.push(blockInstr('Categorize Leaders', 'Modi', 'Manmohan', false));
 timeline.push({
-  timeline: [imgTrial('pm_practice', 'Modi', 'Manmohan', 'Modi', 'Manmohan')],
+  timeline: [imgTrial('practice1', 'Modi', 'Manmohan', 'Modi', 'Manmohan')],
   timeline_variables: [
-    ...MODI_IMAGES.map(img => ({stimulus: img, stim_key_association: 'left'})),
-    ...MANMOHAN_IMAGES.map(img => ({stimulus: img, stim_key_association: 'right'}))
+    ...MODI.map(img => ({stimulus: img, key: 'left'})),
+    ...MANMOHAN.map(img => ({stimulus: img, key: 'right'}))
   ],
   randomize_order: true,
   repetitions: 2
 });
 
-// BLOCK 2: Word Practice
+// BLOCK 2
 timeline.push(blockInstr('Categorize Words', 'Positive', 'Negative', false));
 timeline.push({
-  timeline: [wordTrial('word_practice', 'Positive', 'Negative', 'Positive', 'Negative')],
+  timeline: [wordTrial('practice2', 'Positive', 'Negative', 'Positive', 'Negative')],
   timeline_variables: [
-    ...POSITIVE_WORDS.map(w => ({stimulus: w, stim_key_association: 'left'})),
-    ...NEGATIVE_WORDS.map(w => ({stimulus: w, stim_key_association: 'right'}))
+    ...POSITIVE.map(w => ({stimulus: w, key: 'left'})),
+    ...NEGATIVE.map(w => ({stimulus: w, key: 'right'}))
   ],
   randomize_order: true,
   repetitions: 1
 });
 
-// BLOCK 3: Combined Practice (Modi + Positive)
-timeline.push(blockInstr('Combined Task', 'Modi or Positive', 'Manmohan or Negative', false));
+// BLOCK 3
+timeline.push(blockInstr('Combined', 'Modi or Positive', 'Manmohan or Negative', false));
 timeline.push({
   timeline: [
     {
-      timeline: [imgTrial('combined1_practice', 'Modi/Positive', 'Manmohan/Negative', 'Modi/Pos', 'Man/Neg')],
+      timeline: [imgTrial('practice3', 'Modi/Positive', 'Manmohan/Negative', 'Modi/Pos', 'Man/Neg')],
       timeline_variables: [
-        ...MODI_IMAGES.map(img => ({stimulus: img, stim_key_association: 'left'})),
-        ...MANMOHAN_IMAGES.map(img => ({stimulus: img, stim_key_association: 'right'}))
+        ...MODI.map(img => ({stimulus: img, key: 'left'})),
+        ...MANMOHAN.map(img => ({stimulus: img, key: 'right'}))
       ],
       randomize_order: true
     },
     {
-      timeline: [wordTrial('combined1_practice', 'Modi/Positive', 'Manmohan/Negative', 'Modi/Pos', 'Man/Neg')],
+      timeline: [wordTrial('practice3', 'Modi/Positive', 'Manmohan/Negative', 'Modi/Pos', 'Man/Neg')],
       timeline_variables: [
-        ...POSITIVE_WORDS.map(w => ({stimulus: w, stim_key_association: 'left'})),
-        ...NEGATIVE_WORDS.map(w => ({stimulus: w, stim_key_association: 'right'}))
+        ...POSITIVE.map(w => ({stimulus: w, key: 'left'})),
+        ...NEGATIVE.map(w => ({stimulus: w, key: 'right'}))
       ],
       randomize_order: true
     }
@@ -1055,14 +770,14 @@ timeline.push({
   repetitions: 1
 });
 
-// BLOCK 4: CRITICAL (Modi + Positive)
+// BLOCK 4 - CRITICAL
 timeline.push({
   timeline: [
     {
       timeline: [imgTrial('compatible', 'Modi/Positive', 'Manmohan/Negative', 'Modi/Pos', 'Man/Neg', true)],
       timeline_variables: [
-        ...MODI_IMAGES.map(img => ({stimulus: img, stim_key_association: 'left'})),
-        ...MANMOHAN_IMAGES.map(img => ({stimulus: img, stim_key_association: 'right'}))
+        ...MODI.map(img => ({stimulus: img, key: 'left'})),
+        ...MANMOHAN.map(img => ({stimulus: img, key: 'right'}))
       ],
       randomize_order: true,
       repetitions: 2
@@ -1070,8 +785,8 @@ timeline.push({
     {
       timeline: [wordTrial('compatible', 'Modi/Positive', 'Manmohan/Negative', 'Modi/Pos', 'Man/Neg', true)],
       timeline_variables: [
-        ...POSITIVE_WORDS.map(w => ({stimulus: w, stim_key_association: 'left'})),
-        ...NEGATIVE_WORDS.map(w => ({stimulus: w, stim_key_association: 'right'}))
+        ...POSITIVE.map(w => ({stimulus: w, key: 'left'})),
+        ...NEGATIVE.map(w => ({stimulus: w, key: 'right'}))
       ],
       randomize_order: true,
       repetitions: 2
@@ -1080,35 +795,35 @@ timeline.push({
   randomize_order: true
 });
 
-// BLOCK 5: Political Figures Reversed
-timeline.push(blockInstr('Categorize Political Figures', 'Manmohan', 'Modi', true));
+// BLOCK 5
+timeline.push(blockInstr('Categorize Leaders', 'Manmohan', 'Modi', true));
 timeline.push({
-  timeline: [imgTrial('pm_reversed', 'Manmohan', 'Modi', 'Manmohan', 'Modi')],
+  timeline: [imgTrial('practice4', 'Manmohan', 'Modi', 'Manmohan', 'Modi')],
   timeline_variables: [
-    ...MODI_IMAGES.map(img => ({stimulus: img, stim_key_association: 'right'})),
-    ...MANMOHAN_IMAGES.map(img => ({stimulus: img, stim_key_association: 'left'}))
+    ...MODI.map(img => ({stimulus: img, key: 'right'})),
+    ...MANMOHAN.map(img => ({stimulus: img, key: 'left'}))
   ],
   randomize_order: true,
   repetitions: 5
 });
 
-// BLOCK 6: Combined Practice (Manmohan + Positive)
-timeline.push(blockInstr('Combined Task', 'Manmohan or Positive', 'Modi or Negative', false));
+// BLOCK 6
+timeline.push(blockInstr('Combined', 'Manmohan or Positive', 'Modi or Negative', false));
 timeline.push({
   timeline: [
     {
-      timeline: [imgTrial('combined2_practice', 'Manmohan/Positive', 'Modi/Negative', 'Man/Pos', 'Modi/Neg')],
+      timeline: [imgTrial('practice5', 'Manmohan/Positive', 'Modi/Negative', 'Man/Pos', 'Modi/Neg')],
       timeline_variables: [
-        ...MODI_IMAGES.map(img => ({stimulus: img, stim_key_association: 'right'})),
-        ...MANMOHAN_IMAGES.map(img => ({stimulus: img, stim_key_association: 'left'}))
+        ...MODI.map(img => ({stimulus: img, key: 'right'})),
+        ...MANMOHAN.map(img => ({stimulus: img, key: 'left'}))
       ],
       randomize_order: true
     },
     {
-      timeline: [wordTrial('combined2_practice', 'Manmohan/Positive', 'Modi/Negative', 'Man/Pos', 'Modi/Neg')],
+      timeline: [wordTrial('practice5', 'Manmohan/Positive', 'Modi/Negative', 'Man/Pos', 'Modi/Neg')],
       timeline_variables: [
-        ...POSITIVE_WORDS.map(w => ({stimulus: w, stim_key_association: 'left'})),
-        ...NEGATIVE_WORDS.map(w => ({stimulus: w, stim_key_association: 'right'}))
+        ...POSITIVE.map(w => ({stimulus: w, key: 'left'})),
+        ...NEGATIVE.map(w => ({stimulus: w, key: 'right'}))
       ],
       randomize_order: true
     }
@@ -1117,14 +832,14 @@ timeline.push({
   repetitions: 1
 });
 
-// BLOCK 7: CRITICAL (Manmohan + Positive)
+// BLOCK 7 - CRITICAL
 timeline.push({
   timeline: [
     {
       timeline: [imgTrial('incompatible', 'Manmohan/Positive', 'Modi/Negative', 'Man/Pos', 'Modi/Neg', true)],
       timeline_variables: [
-        ...MODI_IMAGES.map(img => ({stimulus: img, stim_key_association: 'right'})),
-        ...MANMOHAN_IMAGES.map(img => ({stimulus: img, stim_key_association: 'left'}))
+        ...MODI.map(img => ({stimulus: img, key: 'right'})),
+        ...MANMOHAN.map(img => ({stimulus: img, key: 'left'}))
       ],
       randomize_order: true,
       repetitions: 2
@@ -1132,8 +847,8 @@ timeline.push({
     {
       timeline: [wordTrial('incompatible', 'Manmohan/Positive', 'Modi/Negative', 'Man/Pos', 'Modi/Neg', true)],
       timeline_variables: [
-        ...POSITIVE_WORDS.map(w => ({stimulus: w, stim_key_association: 'left'})),
-        ...NEGATIVE_WORDS.map(w => ({stimulus: w, stim_key_association: 'right'}))
+        ...POSITIVE.map(w => ({stimulus: w, key: 'left'})),
+        ...NEGATIVE.map(w => ({stimulus: w, key: 'right'}))
       ],
       randomize_order: true,
       repetitions: 2
@@ -1142,32 +857,31 @@ timeline.push({
   randomize_order: true
 });
 
-// DEBRIEF
+// Debrief
 timeline.push({
   type: jsPsychHtmlKeyboardResponse,
   stimulus: `
-    <div class="container">
+    <div class="page">
       <div class="card">
-        <div class="card-title">Complete</div>
+        <div class="label">Almost Done</div>
         <h1>Thank You!</h1>
-        <p>You have completed the Implicit Association Test.</p>
-        <div class="info">
-          <p><strong>What does this measure?</strong></p>
-          <p>The IAT measures automatic associations by comparing response times. When two concepts are strongly associated in your mind, you can categorize them together more quickly.</p>
+        <p>You've completed the IAT. The test measures automatic associations by comparing response times.</p>
+        <div class="alert success">
+          <p>Faster responses = stronger mental associations</p>
         </div>
-        <p style="text-align: center; margin-top: 24px;">${isMobile ? 'Tap to view your results' : 'Press any key to view your results'}</p>
+        <p style="text-align: center; margin-top: 30px; font-weight: 600;">
+          ${isMobile ? 'Tap to see results' : 'Press any key for results'}
+        </p>
       </div>
     </div>
   `,
-  on_load: function() {
-    if (isMobile) addTouchControls('continue', {label: 'VIEW RESULTS'});
+  on_load: () => {
+    if (isMobile) showControls('continue', 'RESULTS');
   },
-  on_finish: function() {
-    removeTouchControls();
-  }
+  on_finish: () => hideControls()
 });
 
-// RUN EXPERIMENT
+// RUN
 jsPsych.run(timeline);
 </script>
 </html>
